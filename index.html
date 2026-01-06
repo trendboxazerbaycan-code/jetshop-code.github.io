@@ -2,213 +2,236 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TRENDDROPSHOPING | Global Partner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>TrendDS | The Millionaire's Gateway</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --pink: #ff85a2;
-            --pink-dark: #f06292;
-            --pink-light: #fce4ec;
-            --white: #ffffff;
-            --bg: #fdf2f5;
-            --dark: #2d3436;
-            --gray: #636e72;
+            --gold: #d4af37; --dark: #0a0e14; --card: #141b26;
+            --white: #ffffff; --gray: #8e9aaf; --neon: #00ff88;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--dark); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* --- AUTH SCREEN --- */
-        #authScreen {
-            position: fixed; inset: 0; z-index: 9999; background: var(--white);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;
-        }
-        .auth-logo { font-size: 32px; font-weight: 800; color: var(--pink); margin-bottom: 5px; letter-spacing: -1.5px; }
-        .auth-sub { font-size: 10px; color: var(--gray); letter-spacing: 3px; margin-bottom: 40px; font-weight: 700; text-transform: uppercase; }
+        body { background: var(--dark); color: var(--white); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         
-        .inp-group { width: 100%; max-width: 350px; margin-bottom: 15px; }
-        .inp { width: 100%; padding: 18px; border: 2px solid var(--pink-light); border-radius: 18px; font-size: 16px; background: var(--bg); transition: 0.3s; }
-        .inp:focus { border-color: var(--pink); outline: none; background: var(--white); box-shadow: 0 10px 20px rgba(255,133,162,0.1); }
+        .bg-overlay { position: fixed; inset: 0; z-index: -1; background: linear-gradient(rgba(10,14,20,0.96), rgba(10,14,20,0.96)), url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
+
+        #quoteBar { background: var(--gold); color: #000; font-size: 10px; font-weight: 900; padding: 10px; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* AUTH SCREEN */
+        #authScreen { position: fixed; inset: 0; z-index: 9999; background: var(--dark); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; }
+        .luxury-logo { font-family: 'Playfair Display', serif; font-size: 45px; color: var(--gold); margin-bottom: 5px; }
+        .motto { font-size: 10px; letter-spacing: 5px; color: var(--gray); margin-bottom: 40px; font-weight: 700; }
+        .inp { width: 100%; max-width: 380px; padding: 20px; background: var(--card); border: 1px solid #1f2937; border-radius: 12px; color: white; font-size: 16px; margin-bottom: 15px; transition: 0.3s; }
+        .inp:focus { border-color: var(--gold); outline: none; box-shadow: 0 0 15px rgba(212,175,55,0.1); }
+        .btn-gold { width: 100%; max-width: 380px; padding: 20px; background: var(--gold); border: none; border-radius: 12px; color: #000; font-weight: 900; font-size: 15px; cursor: pointer; text-transform: uppercase; box-shadow: 0 10px 30px rgba(212,175,55,0.3); }
+
+        /* HEADER */
+        header { padding: 15px 20px; background: var(--card); border-bottom: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center; }
+        .bal-val { font-size: 24px; font-weight: 800; color: var(--gold); }
+
+        /* CONTENT */
+        #mainContent { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 110px; }
+        .view { display: none; } .view.active { display: block; animation: fadeInUp 0.4s ease-out; }
+        @keyframes fadeInUp { from {opacity:0; transform:translateY(15px)} to {opacity:1; transform:translateY(0)} }
+
+        .biz-banner { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 25px; border-radius: 20px; margin-bottom: 25px; border-left: 5px solid var(--gold); }
+        .biz-banner h2 { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--gold); margin-bottom: 10px; }
+        .biz-banner p { font-size: 13px; color: var(--gray); line-height: 1.6; }
+
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 18px; border: 1px solid #1f2937; }
+        .stat-card span { font-size: 10px; font-weight: 800; color: var(--gray); text-transform: uppercase; display: block; margin-bottom: 5px; }
         
-        .btn-main { width: 100%; max-width: 350px; padding: 20px; background: var(--pink); color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 25px rgba(255, 133, 162, 0.3); }
+        .p-card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid #1f2937; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; transition: 0.3s; }
+        .p-card:active { transform: scale(0.97); border-color: var(--gold); }
+        .p-info h3 { font-size: 16px; margin-bottom: 4px; font-weight: 800; }
+        .p-price { color: var(--gold); font-weight: 900; font-size: 18px; }
 
-        /* --- APP STRUCTURE --- */
-        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--pink-light); }
-        .h-logo { font-weight: 800; font-size: 20px; color: var(--pink); }
-        .earned-box { text-align: right; }
-        .earned-label { font-size: 9px; font-weight: 800; color: var(--gray); text-transform: uppercase; }
-        .earned-val { font-size: 18px; font-weight: 800; color: var(--pink); }
+        .promo-panel { background: rgba(212,175,55,0.05); padding: 30px; border-radius: 25px; border: 2px dashed var(--gold); text-align: center; margin-top: 30px; }
 
-        #mainContent { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadeInUp 0.4s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* DASHBOARD */
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
-        .stat-card { background: var(--white); padding: 20px; border-radius: 22px; border: 1px solid var(--pink-light); box-shadow: 0 10px 25px rgba(0,0,0,0.02); }
-        .stat-card span { font-size: 10px; font-weight: 800; color: var(--pink); text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .stat-card b { font-size: 18px; font-weight: 800; }
-
-        .shop-title { font-weight: 800; margin-bottom: 15px; font-size: 17px; }
-        .item { background: var(--white); padding: 18px; border-radius: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--pink-light); }
-        .item h3 { font-size: 15px; font-weight: 700; }
-        .item p { font-size: 14px; color: var(--pink); font-weight: 800; }
-        .btn-s { background: var(--pink); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 11px; cursor: pointer; }
-
-        .promo-box { background: var(--pink-light); padding: 25px; border-radius: 25px; margin-top: 30px; text-align: center; }
-
-        /* NAVBAR */
-        .nav { position: fixed; bottom: 0; width: 100%; height: 80px; background: var(--white); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--pink-light); padding-bottom: 15px; }
-        .nav-item { color: var(--gray); text-align: center; font-size: 10px; font-weight: 700; cursor: pointer; }
-        .nav-item.active { color: var(--pink); }
-        .nav-item i { font-size: 22px; margin-bottom: 4px; display: block; }
-
-        /* LOADER */
-        #loader { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--pink-light); border-top-color: var(--pink); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* NAV */
+        .nav { position: fixed; bottom: 0; width: 100%; height: 85px; background: var(--card); border-top: 1px solid #1f2937; display: flex; justify-content: space-around; align-items: center; padding-bottom: 15px; }
+        .nav-item { color: var(--gray); font-size: 10px; font-weight: 800; text-align: center; cursor: pointer; }
+        .nav-item.active { color: var(--gold); }
+        .nav-item i { font-size: 24px; margin-bottom: 5px; display: block; }
     </style>
 </head>
 <body>
-
-    <div id="loader"><div class="spinner"></div><p style="margin-top:15px; font-weight:700; color:var(--pink)">Yüklənir...</p></div>
+    <div class="bg-overlay"></div>
+    <div id="quoteBar"><span id="dynamicQuote">"BİZNESDA ŞANS YOXDUR, YALNIZ STRATEGİYA VAR." - JEFF BEZOS</span></div>
 
     <div id="authScreen">
-        <div class="auth-logo">TRENDDROPSHOPING</div>
-        <div class="auth-sub">Global App Partner</div>
-        <div class="inp-group"><input type="text" id="rName" class="inp" placeholder="Ad Soyad"></div>
-        <div class="inp-group"><input type="email" id="rEmail" class="inp" placeholder="Email"></div>
-        <button class="btn-main" onclick="handleLogin()">Daxil Ol</button>
+        <div class="luxury-logo">TrendDS</div>
+        <div class="motto">THE ELITE COMMERCE CIRCLE</div>
+        <input type="text" id="rName" class="inp" placeholder="Tam Adınız">
+        <input type="email" id="rEmail" class="inp" placeholder="Korporativ Email">
+        <button class="btn-gold" onclick="handleLogin()">Terminalı Aktivləşdir</button>
+        <p style="margin-top:30px; font-size:11px; color:var(--gray); text-align:center; max-width:280px; line-height:1.5;">
+            "Həqiqi zənginlik sahib olduğun pullarla deyil, qurduğun sistemlərlə ölçülür."
+        </p>
     </div>
 
     <div id="appScreen" style="display:none">
         <header>
-            <div class="h-logo">TREND<span>DS</span></div>
-            <div class="earned-box">
-                <div class="earned-label">Qazanc</div>
-                <div class="earned-val">$<span id="topEarned">0.00</span></div>
+            <div style="font-family:'Playfair Display', serif; font-size:26px; color:var(--gold)">TrendDS</div>
+            <div style="text-align:right">
+                <div style="font-size:9px; font-weight:800; color:var(--gray)">TOPLAM MƏNFƏƏT</div>
+                <div class="bal-val">$<span id="hEarn">0.00</span></div>
             </div>
         </header>
 
         <div id="mainContent">
             <div id="v-home" class="view active">
-                <div class="stats">
-                    <div class="stat-card"><span>Sabit Balans</span><b id="sBal">$0.00</b></div>
-                    <div class="stat-card"><span>Günlük 1.5%</span><b id="dEarn">$0.00</b></div>
+                <div class="biz-banner">
+                    <h2>Milyonçu Strategiyası</h2>
+                    <p>Siz burada sadəcə rəqəm artırmırsınız. Biz sizin kapitalınızı dünyanın ən nəhəng ticarət şəbəkələrinə yönləndirərək professional dövriyyə yaradırıq. Kapitalınızı hərəkətə gətirin.</p>
                 </div>
 
-                <div class="shop-title">Mağaza Paketləri</div>
+                <div class="stat-grid">
+                    <div class="stat-card"><span>STRATEGİ BALANS</span><b id="sBal" style="font-size:22px;">$0.00</b></div>
+                    <div class="stat-card"><span>GÜNLÜK MARJA</span><b style="color:var(--neon); font-size:22px;">+1.5%</b></div>
+                </div>
+
+                <div style="font-weight:900; font-size:13px; color:var(--gold); margin-bottom:15px; letter-spacing:1px; text-transform:uppercase;">Qlobal Satınalma Paketləri</div>
                 <div id="shopList"></div>
 
-                <div class="promo-box">
-                    <p style="font-size:12px; font-weight:800; margin-bottom:15px">PROMO KOD İLƏ BALANS ARTIR</p>
-                    <input type="text" id="pCode" class="inp" placeholder="Kodu daxil edin" style="text-align:center; background:white; margin-bottom:15px">
-                    <button class="btn-main" onclick="applyCode()">KODU TƏSDİQLƏ</button>
+                <div class="promo-panel">
+                    <h3 style="font-size:14px; color:var(--gold); margin-bottom:15px; font-weight:900;">KAPİTAL AKTİVASİYASI</h3>
+                    <input type="text" id="pCode" class="inp" placeholder="Aktivasiya Kodu" style="text-align:center;">
+                    <button class="btn-gold" style="width:100%" onclick="applyPromo()">KODU TƏSDİQLƏ</button>
                 </div>
             </div>
 
             <div id="v-profile" class="view">
-                <div style="background:white; padding:30px; border-radius:25px; text-align:center; border:1px solid var(--pink-light); margin-bottom:20px">
-                    <h2 id="uName">...</h2>
-                    <p id="uEmail" style="color:var(--gray); font-size:13px">...</p>
+                <div style="background:var(--card); padding:40px; border-radius:25px; text-align:center; border:1px solid #1f2937">
+                    <div style="width:70px; height:70px; background:rgba(212,175,55,0.1); color:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-size:32px;">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <h2 id="uName" style="font-family:'Playfair Display', serif; font-size:28px;">...</h2>
+                    <p id="uEmail" style="color:var(--gray); font-size:14px; margin-top:5px;"></p>
                 </div>
-                <button class="btn-main" style="background:var(--dark); width:100%" onclick="withdraw()">PULU ÇIXAR</button>
-                <p style="text-align:center; font-size:11px; margin-top:10px; color:var(--gray)">Minimum çıxarış $30 | 3 gündən bir</p>
+                <button class="btn-gold" style="width:100%; margin-top:20px; background:white; color:black;" onclick="withdraw()">QAZANCI NAĞDLAŞDIR</button>
             </div>
         </div>
 
         <nav class="nav">
-            <div class="nav-item active" onclick="nav('home', this)"><i class="fa-solid fa-store"></i>Mağaza</div>
-            <div class="nav-item" onclick="nav('profile', this)"><i class="fa-solid fa-user"></i>Profil</div>
-            <div class="nav-item" onclick="wa('Dəstək lazımdır')"><i class="fa-brands fa-whatsapp"></i>Dəstək</div>
+            <div class="nav-item active" onclick="nav('home', this)"><i class="fa-solid fa-gem"></i>Terminal</div>
+            <div class="nav-item" onclick="nav('profile', this)"><i class="fa-solid fa-user-tie"></i>Profil</div>
+            <div class="nav-item" onclick="waRedirect('Salam, mütəxəssis köməyi lazımdır')"><i class="fa-brands fa-whatsapp"></i>Dəstək</div>
         </nav>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycby-U-2s22lrpIf2dwWH1SWlaXLSh6wga5rt6_m8O6eKWWlH0G7W_g_P4vkkhctyx6zO/exec";
-        const WA_PHONE = "994507516137";
+        // YENİ API LİNKİ
+        const API = "https://script.google.com/macros/s/AKfycbw6gXUMslAGxWx21nUKzDhND279Yjv-VckDo8Y_fMEg-m7J35ocE8weS-mVeXLDzdR3/exec";
+        const PHONE = "994507516137";
         let user = { name:"", email:"", balance:0, earned:0 };
 
-        const markets = [
-            {n:"Amazon", p:500}, {n:"Shopify", p:400}, {n:"AliExpress", p:300}, 
-            {n:"Alibaba", p:200}, {n:"Ozon", p:100}, {n:"Ebay", p:50}
+        const quotes = [
+            '"PUL ÜÇÜN İŞLƏMƏYİN, QOYUN PUL SİZİN ÜÇÜN İŞLƏSİN." - ROBERT KIYOSAKI',
+            '"RİSK, NƏ ETDİYİNİZİ BİLMƏDİYİNİZDƏ YARANIR." - WARREN BUFFETT',
+            '"BÖYÜK DÜŞÜNÜN VƏ RİSKLƏRİ İDARƏ EDİN." - JEFF BEZOS',
+            '"DÜNYA SİZİN DÜŞÜNDÜYÜNÜZDƏN DAHA ÇOX İMKANLARLA DOLUDUR."'
         ];
 
-        async function handleLogin() {
-            const n = document.getElementById('rName').value;
-            const e = document.getElementById('rEmail').value;
-            if(!n || !e) return alert("Boşluqları doldurun");
+        const markets = [
+            {n:"Amazon Elite", p:500}, {n:"Shopify Pro", p:400}, 
+            {n:"AliExpress Global", p:300}, {n:"Alibaba Wholesale", p:200},
+            {n:"Ozon Premium", p:100}, {n:"Ebay Basic", p:50}
+        ];
 
-            toggleLoader(true);
+        window.onload = () => {
+            setInterval(() => {
+                document.getElementById('dynamicQuote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+            }, 6000);
+        };
+
+        async function handleLogin() {
+            const n = document.getElementById('rName').value.trim(), e = document.getElementById('rEmail').value.trim();
+            if(!n || !e) return alert("Xanaları doldurun!");
             try {
-                const res = await fetch(`${API}?action=login&name=${encodeURIComponent(n)}&email=${encodeURIComponent(e)}`);
-                const d = await res.json();
-                user = { name:n, email:e, balance:d.data.balance, earned:d.data.earned };
+                const response = await fetch(`${API}?action=login&name=${encodeURIComponent(n)}&email=${encodeURIComponent(e)}`);
+                const data = await response.json();
+                user = { name:n, email:e, balance:parseFloat(data.data.balance || 0), earned:parseFloat(data.data.earned || 0) };
                 startApp();
-            } catch(err) { alert("Bağlantı xətası!"); }
-            toggleLoader(false);
+            } catch(x) { alert("Sistem bağlantı xətası!"); }
         }
 
         function startApp() {
-            document.getElementById('authScreen').style.display = 'none';
-            document.getElementById('appScreen').style.display = 'flex';
+            document.getElementById('authScreen').style.display='none';
+            document.getElementById('appScreen').style.display='flex';
             document.getElementById('uName').innerText = user.name;
             document.getElementById('uEmail').innerText = user.email;
-            
             let html = "";
             markets.forEach(m => {
-                html += `<div class="item"><div><h3>${m.n}</h3><p>$${m.p}</p></div><button class="btn-s" onclick="buy('${m.n}',${m.p})">ALMAQ</button></div>`;
+                html += `<div class="p-card">
+                    <div class="p-info"><h3>${m.n}</h3><p class="p-price">$${m.p}.00</p></div>
+                    <button class="btn-gold" style="width:auto; padding:12px 20px; font-size:12px;" onclick="buyItem('${m.n}', ${m.p})">AKTİV ET</button>
+                </div>`;
             });
             document.getElementById('shopList').innerHTML = html;
             updateUI();
-            setInterval(calc, 60000); // 1.5% faiz simulyasiyası
+            setInterval(autoGain, 60000);
         }
 
-        async function applyCode() {
-            const c = document.getElementById('pCode').value;
+        function buyItem(name, price) {
+            if(user.balance < price) {
+                alert(`KAPİTAL ÇATMIR!\nHazırkı balansınız ($${user.balance.toFixed(2)}) bu dövriyyəni aktivləşdirmək üçün kifayət deyil.`);
+            } else {
+                if(confirm(`${name} dövriyyəsini başlatmaq istəyirsiniz?`)) {
+                    user.balance -= price;
+                    updateUI();
+                    sync("Investment: " + name);
+                    alert("Dövriyyə uğurla başladı!");
+                }
+            }
+        }
+
+        async function applyPromo() {
+            const c = document.getElementById('pCode').value.trim();
             if(!c) return;
-            toggleLoader(true);
             try {
                 const res = await fetch(`${API}?action=applyCode&code=${encodeURIComponent(c)}&email=${user.email}`);
                 const d = await res.json();
                 if(d.result === 'success') {
                     user.balance += d.amount;
                     updateUI();
-                    alert("Uğurlu!");
-                } else { alert(d.msg); }
+                    sync("Injection");
+                    alert(`Uğurlu! +$${d.amount} kapital əlavə edildi.`);
+                    document.getElementById('pCode').value = "";
+                } else { alert("Yanlış kod!"); }
             } catch(e) {}
-            toggleLoader(false);
         }
 
         function updateUI() {
             document.getElementById('sBal').innerText = "$" + user.balance.toFixed(2);
-            document.getElementById('dEarn').innerText = "$" + user.earned.toFixed(2);
-            document.getElementById('topEarned').innerText = user.earned.toFixed(2);
+            document.getElementById('hEarn').innerText = user.earned.toFixed(2);
         }
 
-        function calc() {
+        function autoGain() {
             if(user.balance > 0) {
                 user.earned += (user.balance * 0.015) / 1440;
                 updateUI();
+                sync("Auto Sync");
             }
         }
 
+        function sync(st) {
+            fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${encodeURIComponent(st)}`, {mode:'no-cors'});
+        }
+
+        function waRedirect(m) { window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(m)}`, '_blank'); }
+        function withdraw() { if(user.earned < 30) return alert("Min $30 qazanc lazımdır."); waRedirect(`$${user.earned.toFixed(2)} çıxarış istəyirəm.`); }
         function nav(v, el) {
             document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
             document.getElementById('v-'+v).classList.add('active');
             el.classList.add('active');
         }
-
-        function buy(n,p) { wa(`Mən ${n} ($${p}) paketi üçün kod almaq istəyirəm.`); }
-        function withdraw() { if(user.earned < 30) alert("Min. $30 lazımdır"); else wa(`$${user.earned.toFixed(2)} çıxarış etmək istəyirəm.`); }
-        function wa(m) { window.location.href = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(m)}`; }
-        function toggleLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
     </script>
 </body>
 </html>
