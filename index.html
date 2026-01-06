@@ -2,281 +2,213 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrendDropshipping | Global Partner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TRENDDROPSHOPING | Global Partner</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
-            --accent: #6366f1;
-            --dark: #0f172a;
-            --light: #f8fafc;
-            --success: #10b981;
-            --gray: #94a3b8;
+            --pink: #ff85a2;
+            --pink-dark: #f06292;
+            --pink-light: #fce4ec;
             --white: #ffffff;
+            --bg: #fdf2f5;
+            --dark: #2d3436;
+            --gray: #636e72;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--light); color: var(--dark); overflow-x: hidden; height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--dark); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* --- AUTH SCREEN --- */
         #authScreen {
             position: fixed; inset: 0; z-index: 9999; background: var(--white);
             display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px;
         }
-        .auth-logo { font-size: 32px; font-weight: 800; color: var(--accent); margin-bottom: 5px; letter-spacing: -1px; }
-        .auth-sub { font-size: 12px; color: var(--gray); letter-spacing: 4px; margin-bottom: 40px; font-weight: 600; }
+        .auth-logo { font-size: 32px; font-weight: 800; color: var(--pink); margin-bottom: 5px; letter-spacing: -1.5px; }
+        .auth-sub { font-size: 10px; color: var(--gray); letter-spacing: 3px; margin-bottom: 40px; font-weight: 700; text-transform: uppercase; }
         
-        .field { position: relative; margin-bottom: 15px; width: 100%; max-width: 340px; }
-        .field i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 18px; }
-        .inp { width: 100%; padding: 18px 15px 18px 50px; border: 1.5px solid #e2e8f0; border-radius: 16px; font-size: 16px; transition: 0.3s; background: var(--light); }
-        .inp:focus { border-color: var(--accent); outline: none; background: var(--white); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        .inp-group { width: 100%; max-width: 350px; margin-bottom: 15px; }
+        .inp { width: 100%; padding: 18px; border: 2px solid var(--pink-light); border-radius: 18px; font-size: 16px; background: var(--bg); transition: 0.3s; }
+        .inp:focus { border-color: var(--pink); outline: none; background: var(--white); box-shadow: 0 10px 20px rgba(255,133,162,0.1); }
         
-        .btn-auth { width: 100%; max-width: 340px; padding: 20px; background: var(--accent); color: white; border: none; border-radius: 16px; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2); }
+        .btn-main { width: 100%; max-width: 350px; padding: 20px; background: var(--pink); color: white; border: none; border-radius: 18px; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; box-shadow: 0 8px 25px rgba(255, 133, 162, 0.3); }
 
-        /* --- APP HEADER --- */
-        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 100; }
-        .h-logo { font-weight: 800; font-size: 22px; color: var(--accent); }
-        .h-bal { background: rgba(99, 102, 241, 0.1); color: var(--accent); padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 15px; }
+        /* --- APP STRUCTURE --- */
+        header { background: var(--white); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--pink-light); }
+        .h-logo { font-weight: 800; font-size: 20px; color: var(--pink); }
+        .earned-box { text-align: right; }
+        .earned-label { font-size: 9px; font-weight: 800; color: var(--gray); text-transform: uppercase; }
+        .earned-val { font-size: 18px; font-weight: 800; color: var(--pink); }
 
-        /* --- VIEWS --- */
-        #mainContent { flex: 1; overflow-y: auto; position: relative; }
-        .view { display: none; padding: 20px; padding-bottom: 100px; animation: slideUp 0.4s ease-out; }
-        .view.active { display: block; }
-        @keyframes slideUp { from {opacity: 0; transform: translateY(20px);} to {opacity: 1; transform: translateY(0);} }
+        #mainContent { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeInUp 0.4s ease; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* LOBBY */
-        .hero { background: linear-gradient(135deg, #6366f1, #4f46e5); border-radius: 24px; padding: 30px; color: white; margin-bottom: 25px; box-shadow: 0 15px 30px rgba(99, 102, 241, 0.3); }
-        .hero h1 { font-size: 24px; margin-bottom: 8px; font-weight: 800; }
-        .hero p { font-size: 13px; opacity: 0.8; }
+        /* DASHBOARD */
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--white); padding: 20px; border-radius: 22px; border: 1px solid var(--pink-light); box-shadow: 0 10px 25px rgba(0,0,0,0.02); }
+        .stat-card span { font-size: 10px; font-weight: 800; color: var(--pink); text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .stat-card b { font-size: 18px; font-weight: 800; }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .card { background: var(--white); padding: 25px; border-radius: 24px; border: 1px solid #e2e8f0; text-align: center; transition: 0.3s; }
-        .card img { width: 50px; margin-bottom: 15px; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1)); }
-        .card h3 { font-size: 14px; margin-bottom: 5px; font-weight: 700; }
-        .card span { color: var(--accent); font-size: 11px; font-weight: 800; }
+        .shop-title { font-weight: 800; margin-bottom: 15px; font-size: 17px; }
+        .item { background: var(--white); padding: 18px; border-radius: 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--pink-light); }
+        .item h3 { font-size: 15px; font-weight: 700; }
+        .item p { font-size: 14px; color: var(--pink); font-weight: 800; }
+        .btn-s { background: var(--pink); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: 800; font-size: 11px; cursor: pointer; }
 
-        /* GRAB TASK */
-        .task-box { background: var(--white); padding: 30px; border-radius: 30px; border: 1px solid #e2e8f0; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
-        .task-img-wrap { width: 180px; height: 180px; margin: 0 auto 20px; background: var(--light); border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .task-img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .task-comm { display: inline-block; padding: 8px 20px; background: #f0fdf4; color: var(--success); border-radius: 30px; font-size: 14px; font-weight: 800; margin-bottom: 15px; }
+        .promo-box { background: var(--pink-light); padding: 25px; border-radius: 25px; margin-top: 30px; text-align: center; }
 
-        /* BOTTOM NAV */
-        .navbar { position: fixed; bottom: 0; width: 100%; height: 85px; background: var(--white); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #e2e8f0; padding-bottom: 15px; }
-        .nav-item { color: #94a3b8; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; cursor: pointer; }
-        .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 24px; }
+        /* NAVBAR */
+        .nav { position: fixed; bottom: 0; width: 100%; height: 80px; background: var(--white); display: flex; justify-content: space-around; align-items: center; border-top: 1px solid var(--pink-light); padding-bottom: 15px; }
+        .nav-item { color: var(--gray); text-align: center; font-size: 10px; font-weight: 700; cursor: pointer; }
+        .nav-item.active { color: var(--pink); }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; display: block; }
 
-        /* MODAL */
-        .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 25px; }
-        .modal { background: var(--white); padding: 35px; border-radius: 32px; width: 100%; max-width: 350px; text-align: center; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { 100% {transform: rotate(360deg);} }
-
-        .btn-with { background: var(--dark); color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 800; width: 100%; margin-top: 10px; }
-        .btn-dep { background: var(--success); color: white; padding: 18px; border-radius: 16px; border: none; font-weight: 800; width: 100%; margin-top: 10px; }
+        /* LOADER */
+        #loader { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--pink-light); border-top-color: var(--pink); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
+    <div id="loader"><div class="spinner"></div><p style="margin-top:15px; font-weight:700; color:var(--pink)">Yüklənir...</p></div>
+
     <div id="authScreen">
-        <div class="auth-logo">Trend<span>DS</span></div>
-        <div class="auth-sub">GLOBAL DROPSHIPPING</div>
-        
-        <div class="field">
-            <i class="fa-solid fa-user-circle"></i>
-            <input type="text" id="rName" class="inp" placeholder="Ad Soyad">
-        </div>
-        <div class="field">
-            <i class="fa-solid fa-envelope"></i>
-            <input type="email" id="rEmail" class="inp" placeholder="Email Adresi">
-        </div>
-        <div class="field">
-            <i class="fa-solid fa-shield-halved"></i>
-            <input type="text" id="rCode" class="inp" placeholder="Aktivasyon Kodu">
-        </div>
-        
-        <button class="btn-auth" id="loginBtn" onclick="handleLogin()">Hesaba Daxil Ol</button>
-        <p style="margin-top:25px; font-size:14px; color:var(--gray); font-weight:600">Kodunuz yoxdur? <span style="color:var(--accent); cursor:pointer" onclick="wa('Salam, yeni JET-SHOP koduna ehtiyacım var')">Dəstəyə yazın</span></p>
+        <div class="auth-logo">TRENDDROPSHOPING</div>
+        <div class="auth-sub">Global App Partner</div>
+        <div class="inp-group"><input type="text" id="rName" class="inp" placeholder="Ad Soyad"></div>
+        <div class="inp-group"><input type="email" id="rEmail" class="inp" placeholder="Email"></div>
+        <button class="btn-main" onclick="handleLogin()">Daxil Ol</button>
     </div>
 
     <div id="appScreen" style="display:none">
         <header>
-            <div class="h-logo">Trend<span>DS</span></div>
-            <div class="h-bal">$ <span id="uBal">0.00</span></div>
+            <div class="h-logo">TREND<span>DS</span></div>
+            <div class="earned-box">
+                <div class="earned-label">Qazanc</div>
+                <div class="earned-val">$<span id="topEarned">0.00</span></div>
+            </div>
         </header>
 
         <div id="mainContent">
-            
             <div id="v-home" class="view active">
-                <div class="hero">
-                    <h1>Xoş Gəldiniz!</h1>
-                    <p>Günlük dropshipping tapşırıqlarını tamamlayaraq komissiya qazanın.</p>
-                </div>
-                <div style="font-weight:800; margin-bottom:15px; font-size:18px">Mağazalar</div>
-                <div class="grid">
-                    <div class="card" onclick="nav('grab')">
-                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968204.png">
-                        <h3>Trend VIP 1</h3>
-                        <span>5 Tapşırıq/Gün</span>
-                    </div>
-                    <div class="card" style="opacity:0.6" onclick="alert('Balansınız minimum 100$ olmalıdır')">
-                        <img src="https://cdn-icons-png.flaticon.com/512/5968/5968204.png">
-                        <h3>Trend VIP 2</h3>
-                        <span>10 Tapşırıq/Gün</span>
-                    </div>
-                </div>
-            </div>
-
-            <div id="v-grab" class="view">
-                <div style="display:flex; justify-content:space-between; margin-bottom:25px; gap:15px">
-                    <div style="background:var(--white); padding:18px; border-radius:20px; flex:1; border:1px solid #e2e8f0; text-align:center">
-                        <span style="font-size:11px; color:var(--gray); font-weight:700">Günlük Qazanc</span><br>
-                        <b id="todayEarn" style="color:var(--success); font-size:18px">$0.00</b>
-                    </div>
-                    <div style="background:var(--white); padding:18px; border-radius:20px; flex:1; border:1px solid #e2e8f0; text-align:center">
-                        <span style="font-size:11px; color:var(--gray); font-weight:700">Tamamlanıb</span><br>
-                        <b id="taskCount" style="font-size:18px">0 / 5</b>
-                    </div>
+                <div class="stats">
+                    <div class="stat-card"><span>Sabit Balans</span><b id="sBal">$0.00</b></div>
+                    <div class="stat-card"><span>Günlük 1.5%</span><b id="dEarn">$0.00</b></div>
                 </div>
 
-                <div class="task-box">
-                    <div class="task-img-wrap"><img id="pImg" src="" class="task-img"></div>
-                    <h2 id="pTitle" style="font-size:18px; margin-bottom:12px; font-weight:800">Yüklənir...</h2>
-                    <div class="task-comm">Komissiya: <span id="pComm">$0.00</span></div>
-                    <button class="btn-auth" id="grabBtn" onclick="processGrab()">Siparişi Təsdiqlə</button>
+                <div class="shop-title">Mağaza Paketləri</div>
+                <div id="shopList"></div>
+
+                <div class="promo-box">
+                    <p style="font-size:12px; font-weight:800; margin-bottom:15px">PROMO KOD İLƏ BALANS ARTIR</p>
+                    <input type="text" id="pCode" class="inp" placeholder="Kodu daxil edin" style="text-align:center; background:white; margin-bottom:15px">
+                    <button class="btn-main" onclick="applyCode()">KODU TƏSDİQLƏ</button>
                 </div>
             </div>
 
             <div id="v-profile" class="view">
-                <div style="background:var(--white); padding:35px; border-radius:30px; text-align:center; margin-bottom:20px; border:1px solid #e2e8f0">
-                    <div style="width:90px; height:90px; background:var(--light); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px; font-size:36px; color:var(--accent)">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </div>
-                    <h2 id="userName" style="font-weight:800">İstifadəçi</h2>
-                    <p id="userEmail" style="color:var(--gray); font-size:14px; font-weight:600"></p>
+                <div style="background:white; padding:30px; border-radius:25px; text-align:center; border:1px solid var(--pink-light); margin-bottom:20px">
+                    <h2 id="uName">...</h2>
+                    <p id="uEmail" style="color:var(--gray); font-size:13px">...</p>
                 </div>
-                
-                <button class="btn-dep" onclick="wa('Balansımı artırmaq istəyirəm. Email: ' + user.email)">DEPOZİT</button>
-                <button class="btn-with" onclick="withdraw()">PULU ÇƏK</button>
+                <button class="btn-main" style="background:var(--dark); width:100%" onclick="withdraw()">PULU ÇIXAR</button>
+                <p style="text-align:center; font-size:11px; margin-top:10px; color:var(--gray)">Minimum çıxarış $30 | 3 gündən bir</p>
             </div>
-
         </div>
 
-        <div class="navbar">
-            <div class="nav-item active" id="n-home" onclick="nav('home')"><i class="fa-solid fa-house"></i>Ev</div>
-            <div class="nav-item" id="n-grab" onclick="nav('grab')"><i class="fa-solid fa-cart-shopping"></i>Sifariş</div>
-            <div class="nav-item" id="n-profile" onclick="nav('profile')"><i class="fa-solid fa-user"></i>Profil</div>
-        </div>
-    </div>
-
-    <div id="loader" class="overlay">
-        <div class="modal">
-            <div class="spinner"></div>
-            <p id="loaderMsg" style="font-weight:700">Gözləyin...</p>
-        </div>
+        <nav class="nav">
+            <div class="nav-item active" onclick="nav('home', this)"><i class="fa-solid fa-store"></i>Mağaza</div>
+            <div class="nav-item" onclick="nav('profile', this)"><i class="fa-solid fa-user"></i>Profil</div>
+            <div class="nav-item" onclick="wa('Dəstək lazımdır')"><i class="fa-brands fa-whatsapp"></i>Dəstək</div>
+        </nav>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbwxptBKZ9pDn_HkmR8MAsWtkf73Q0c971ClR6JrpQPWyC0NitfN7uBmjl0F1A3fWW6c/exec";
-        const WA_NUM = "994507516137";
+        const API = "https://script.google.com/macros/s/AKfycby-U-2s22lrpIf2dwWH1SWlaXLSh6wga5rt6_m8O6eKWWlH0G7W_g_P4vkkhctyx6zO/exec";
+        const WA_PHONE = "994507516137";
+        let user = { name:"", email:"", balance:0, earned:0 };
 
-        let user = { name: "", email: "", balance: 0, deposit: 0, tasks: 0, todayEarn: 0 };
-        const products = [
-            { t: "iPhone 15 Pro Max Leather Case", i: "https://m.media-amazon.com/images/I/71jG+e7roXL._AC_SL1500_.jpg", c: 2.10 },
-            { t: "Sony WH-1000XM5 Headphones", i: "https://m.media-amazon.com/images/I/51SKmu2G9FL._AC_SL1500_.jpg", c: 3.50 },
-            { t: "Samsung Galaxy Watch 6 Pro", i: "https://m.media-amazon.com/images/I/61fI-B4H-jL._AC_SL1500_.jpg", c: 2.80 },
-            { t: "Mechanical Gaming Keyboard RGB", i: "https://m.media-amazon.com/images/I/71676D0R86L._AC_SL1500_.jpg", c: 1.90 }
+        const markets = [
+            {n:"Amazon", p:500}, {n:"Shopify", p:400}, {n:"AliExpress", p:300}, 
+            {n:"Alibaba", p:200}, {n:"Ozon", p:100}, {n:"Ebay", p:50}
         ];
 
-        window.onload = () => {
-            const saved = localStorage.getItem('tds_v2_session');
-            if(saved) { user = JSON.parse(saved); showApp(); }
-        };
-
-        function wa(msg) { window.location.href = `https://wa.me/${WA_NUM}?text=${encodeURIComponent(msg)}`; }
-
         async function handleLogin() {
-            let n = document.getElementById('rName').value, e = document.getElementById('rEmail').value, c = document.getElementById('rCode').value;
-            if(!n || !e || !c) return alert("Bütün xanaları doldurun!");
+            const n = document.getElementById('rName').value;
+            const e = document.getElementById('rEmail').value;
+            if(!n || !e) return alert("Boşluqları doldurun");
 
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('loaderMsg').innerText = "Hesab yoxlanılır...";
-
+            toggleLoader(true);
             try {
-                let res = await fetch(`${API}?action=login&name=${encodeURIComponent(n)}&email=${encodeURIComponent(e)}&code=${encodeURIComponent(c)}`);
-                let data = await res.json();
-                
-                if(data.result === 'success') {
-                    user = { name: n, email: e, balance: data.balance, deposit: data.balance, tasks: 0, todayEarn: 0 };
-                    localStorage.setItem('tds_v2_session', JSON.stringify(user));
-                    showApp();
-                } else alert(data.msg);
-            } catch(err) { alert("Sistemə qoşulmaq olmadı. İnterneti yoxlayın."); }
-            document.getElementById('loader').style.display = 'none';
+                const res = await fetch(`${API}?action=login&name=${encodeURIComponent(n)}&email=${encodeURIComponent(e)}`);
+                const d = await res.json();
+                user = { name:n, email:e, balance:d.data.balance, earned:d.data.earned };
+                startApp();
+            } catch(err) { alert("Bağlantı xətası!"); }
+            toggleLoader(false);
         }
 
-        function showApp() {
+        function startApp() {
             document.getElementById('authScreen').style.display = 'none';
             document.getElementById('appScreen').style.display = 'flex';
-            document.getElementById('userName').innerText = user.name;
-            document.getElementById('userEmail').innerText = user.email;
+            document.getElementById('uName').innerText = user.name;
+            document.getElementById('uEmail').innerText = user.email;
+            
+            let html = "";
+            markets.forEach(m => {
+                html += `<div class="item"><div><h3>${m.n}</h3><p>$${m.p}</p></div><button class="btn-s" onclick="buy('${m.n}',${m.p})">ALMAQ</button></div>`;
+            });
+            document.getElementById('shopList').innerHTML = html;
             updateUI();
+            setInterval(calc, 60000); // 1.5% faiz simulyasiyası
+        }
+
+        async function applyCode() {
+            const c = document.getElementById('pCode').value;
+            if(!c) return;
+            toggleLoader(true);
+            try {
+                const res = await fetch(`${API}?action=applyCode&code=${encodeURIComponent(c)}&email=${user.email}`);
+                const d = await res.json();
+                if(d.result === 'success') {
+                    user.balance += d.amount;
+                    updateUI();
+                    alert("Uğurlu!");
+                } else { alert(d.msg); }
+            } catch(e) {}
+            toggleLoader(false);
         }
 
         function updateUI() {
-            document.getElementById('uBal').innerText = `$${user.balance.toFixed(2)}`;
-            document.getElementById('todayEarn').innerText = `$${user.todayEarn.toFixed(2)}`;
-            document.getElementById('taskCount').innerText = `${user.tasks} / 5`;
-            localStorage.setItem('tds_v2_session', JSON.stringify(user));
+            document.getElementById('sBal').innerText = "$" + user.balance.toFixed(2);
+            document.getElementById('dEarn').innerText = "$" + user.earned.toFixed(2);
+            document.getElementById('topEarned').innerText = user.earned.toFixed(2);
         }
 
-        function nav(p) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('v-' + p).classList.add('active');
-            document.getElementById('n-' + p).classList.add('active');
-            if(p === 'grab') loadProd();
-        }
-
-        function loadProd() {
-            let p = products[Math.floor(Math.random() * products.length)];
-            document.getElementById('pImg').src = p.i;
-            document.getElementById('pTitle').innerText = p.t;
-            document.getElementById('pComm').innerText = `$${p.c.toFixed(2)}`;
-            user.activeComm = p.c;
-        }
-
-        function processGrab() {
-            if(user.tasks >= 5) return alert("Gündəlik limitiniz bitdi. Sabah yenidən gəlin.");
-            if(user.balance < 5) return alert("Sifariş üçün balansınızda ən az 5$ olmalıdır.");
-
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('loaderMsg').innerText = "Sifariş TrendDS anbarında təsdiqlənir...";
-
-            setTimeout(() => {
-                user.tasks++;
-                user.balance += user.activeComm;
-                user.todayEarn += user.activeComm;
+        function calc() {
+            if(user.balance > 0) {
+                user.earned += (user.balance * 0.015) / 1440;
                 updateUI();
-                
-                // Google Sheet Update
-                fetch(`${API}?action=updateBal&email=${user.email}&newBalance=${user.balance.toFixed(2)}`, {mode:'no-cors'});
-                
-                document.getElementById('loader').style.display = 'none';
-                alert("Təbriklər! Komissiya hesabınıza əlavə edildi.");
-                loadProd();
-            }, 2000);
+            }
         }
 
-        function withdraw() {
-            if(user.balance > user.deposit) {
-                wa(`ID: ${user.email}. Balans: $${user.balance.toFixed(2)}. Çıxarış etmək istəyirəm.`);
-            } else alert("Pulu çəkmək üçün ən azı bir neçə tapşırıq tamamlamalısınız.");
+        function nav(v, el) {
+            document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            document.getElementById('v-'+v).classList.add('active');
+            el.classList.add('active');
         }
+
+        function buy(n,p) { wa(`Mən ${n} ($${p}) paketi üçün kod almaq istəyirəm.`); }
+        function withdraw() { if(user.earned < 30) alert("Min. $30 lazımdır"); else wa(`$${user.earned.toFixed(2)} çıxarış etmək istəyirəm.`); }
+        function wa(m) { window.location.href = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(m)}`; }
+        function toggleLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
     </script>
 </body>
 </html>
