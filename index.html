@@ -2,8 +2,8 @@
 <html lang="az">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TrendDS | Elite Business Terminal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>TrendDS | Qlobal Biznes Terminalı</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,175 +11,220 @@
     <style>
         :root {
             --gold: #d4af37; --dark: #0a0e14; --card: #141b26;
-            --white: #ffffff; --gray: #8e9aaf; --neon: #00ff88;
+            --white: #ffffff; --gray: #8e9aaf; --neon: #00ff88; --amz-orange: #ff9900;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        /* --- BASIC RESET --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         
-        html, body { 
-            height: 100%; 
-            width: 100%; 
-            background: var(--dark); 
+        body { 
+            background-color: var(--dark); 
             color: var(--white); 
-            overflow: hidden; /* Səhifənin özü oynamasın, daxili kontent sürüşsün */
+            line-height: 1.6;
+            overflow-x: hidden;
+            overflow-y: auto; /* SCROLL BURADA AKTİVLƏŞİR */
         }
 
-        .bg-overlay { position: fixed; inset: 0; z-index: -1; background: linear-gradient(rgba(10,14,20,0.96), rgba(10,14,20,0.96)), url('https://www.transparenttextures.com/patterns/carbon-fibre.png'); }
+        /* --- BACKGROUND --- */
+        .bg-pattern {
+            position: fixed; inset: 0; z-index: -1;
+            background: linear-gradient(rgba(10,14,20,0.97), rgba(10,14,20,0.97)), url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+        }
 
-        /* AUTH SCREEN - TAM MOBIL UYUMLU */
-        #authScreen { position: fixed; inset: 0; z-index: 10000; background: var(--dark); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px; }
-        .luxury-logo { font-family: 'Playfair Display', serif; font-size: 38px; color: var(--gold); }
-        .inp { width: 100%; max-width: 400px; padding: 16px; background: var(--card); border: 1px solid #1f2937; border-radius: 12px; color: white; font-size: 16px; margin-bottom: 15px; }
-        .btn-gold { width: 100%; max-width: 400px; padding: 18px; background: var(--gold); border: none; border-radius: 12px; color: #000; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 20px rgba(212,175,55,0.2); }
+        /* --- LOGIN SCREEN --- */
+        #authScreen {
+            position: fixed; inset: 0; z-index: 10000; background: var(--dark);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 25px;
+        }
+        .luxury-logo { font-family: 'Playfair Display', serif; font-size: 45px; color: var(--gold); text-shadow: 0 0 20px rgba(212,175,55,0.3); }
+        .auth-card { width: 100%; max-width: 400px; text-align: center; }
+        .inp { width: 100%; padding: 18px; margin-bottom: 15px; background: var(--card); border: 1px solid #1f2937; border-radius: 12px; color: white; font-size: 16px; }
+        .btn-gold { width: 100%; padding: 18px; background: var(--gold); border: none; border-radius: 12px; color: #000; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; box-shadow: 0 10px 30px rgba(212,175,55,0.3); }
 
-        /* HEADER */
+        /* --- APP HEADER --- */
         header { 
-            height: 70px; padding: 0 20px; background: var(--card); 
-            border-bottom: 1px solid #1f2937; display: flex; 
-            justify-content: space-between; align-items: center; flex-shrink: 0;
+            position: sticky; top: 0; z-index: 100;
+            background: var(--card); padding: 15px 20px; 
+            border-bottom: 3px solid var(--amz-orange);
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .bal-display { text-align: right; }
+        .bal-val { font-size: 24px; font-weight: 800; color: var(--gold); }
 
-        /* SCROLLABLE MAIN CONTENT */
-        #mainContent { 
-            flex: 1; 
-            overflow-y: auto; /* AŞAĞI SÜRÜŞDÜRMƏNİ TƏMİN EDİR */
-            padding: 15px; 
-            -webkit-overflow-scrolling: touch; /* iOS üçün rəvan sürüşmə */
-            padding-bottom: 100px; /* Naviqasiya üçün yer */
+        /* --- MAIN CONTAINER --- */
+        .container { 
+            width: 100%; max-width: 600px; margin: 0 auto; padding: 20px;
+            padding-bottom: 120px; /* Naviqasiya üçün boşluq */
         }
 
         .view { display: none; width: 100%; }
-        .view.active { display: block; animation: fadeInUp 0.4s ease-out; }
-        @keyframes fadeInUp { from {opacity:0; transform:translateY(15px)} to {opacity:1; transform:translateY(0)} }
+        .view.active { display: block; animation: fadeInUp 0.5s ease; }
+        @keyframes fadeInUp { from {opacity:0; transform:translateY(20px)} to {opacity:1; transform:translateY(0)} }
 
-        /* BİZNES ELEMENTLƏRİ */
-        .biz-banner { background: linear-gradient(135deg, #1e293b, #0f172a); padding: 20px; border-radius: 15px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 15px; border: 1px solid #1f2937; }
-        
-        /* PAKETLƏR */
-        .p-card { 
-            background: var(--card); padding: 18px; border-radius: 15px; 
+        /* --- BUSINESS WIDGETS --- */
+        .biz-banner { 
+            background: linear-gradient(135deg, #1e293b, #0f172a); 
+            padding: 25px; border-radius: 20px; margin-bottom: 25px; 
+            border-left: 5px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: var(--card); padding: 20px; border-radius: 18px; border: 1px solid #1f2937; text-align: center; }
+        .stat-card span { font-size: 10px; color: var(--gray); font-weight: 800; text-transform: uppercase; }
+        .stat-card b { font-size: 22px; display: block; margin-top: 5px; }
+
+        /* --- PRODUCT PACKAGES --- */
+        .package { 
+            background: var(--card); padding: 20px; border-radius: 20px; 
             border: 1px solid #1f2937; display: flex; 
             justify-content: space-between; align-items: center; 
-            margin-bottom: 12px; 
+            margin-bottom: 15px; transition: 0.3s;
         }
-        .btn-action { background: var(--gold); color: #000; padding: 10px 15px; border-radius: 10px; font-weight: 800; font-size: 11px; border: none; }
+        .package:active { transform: scale(0.97); border-color: var(--gold); }
+        .p-info h3 { font-size: 16px; margin-bottom: 5px; }
+        .p-price { color: var(--gold); font-weight: 900; font-size: 18px; }
+        .btn-buy { background: var(--gold); color: #000; padding: 12px 20px; border-radius: 12px; font-weight: 800; border: none; font-size: 12px; }
 
-        /* MOBİL NAVİQASİYA (FIXED) */
+        /* --- PROMO PANEL --- */
+        .promo-panel { 
+            background: rgba(212,175,55,0.05); padding: 30px; border-radius: 25px; 
+            border: 2px dashed var(--gold); text-align: center; margin-top: 20px; 
+        }
+
+        /* --- NAVBAR (FIXED BOTTOM) --- */
         .nav { 
-            position: fixed; bottom: 0; width: 100%; 
-            height: 80px; background: var(--card); 
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            height: 85px; background: var(--card); 
             border-top: 1px solid #1f2937; display: flex; 
-            justify-content: space-around; align-items: center; 
-            padding-bottom: env(safe-area-inset-bottom); /* iPhone notch üçün */
+            justify-content: space-around; align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 1000;
         }
-        .nav-item { color: var(--gray); text-align: center; font-size: 10px; font-weight: 800; cursor: pointer; flex: 1; }
+        .nav-item { color: var(--gray); text-align: center; font-size: 11px; font-weight: 800; cursor: pointer; }
         .nav-item.active { color: var(--gold); }
-        .nav-item i { font-size: 22px; margin-bottom: 4px; display: block; }
+        .nav-item i { font-size: 24px; margin-bottom: 5px; display: block; }
 
-        /* PROMO PANEL */
-        .promo-panel { background: rgba(212,175,55,0.05); padding: 25px; border-radius: 20px; border: 1px dashed var(--gold); text-align: center; margin-top: 20px; }
+        /* --- LOADER --- */
+        #loader { position: fixed; inset: 0; background: var(--dark); z-index: 11000; display: none; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
+
+    <div class="bg-pattern"></div>
+    <div id="loader"><i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--gold)"></i></div>
 
     <div id="authScreen">
-        <div class="luxury-logo">TrendDS</div>
-        <div style="font-size:10px; letter-spacing:4px; color:var(--gray); margin-bottom:25px;">ELITE BUSINESS ACCESS</div>
-        <input type="text" id="rName" class="inp" placeholder="Ad Soyad">
-        <input type="email" id="rEmail" class="inp" placeholder="Email">
-        <button class="btn-gold" onclick="handleLogin()">Giriş</button>
+        <div class="auth-card">
+            <div class="luxury-logo">TrendDS</div>
+            <div style="font-size:10px; letter-spacing:5px; color:var(--gray); margin-bottom:35px; font-weight:700;">THE ELITE COMMERCE HUB</div>
+            <input type="text" id="rName" class="inp" placeholder="Ad Soyad">
+            <input type="email" id="rEmail" class="inp" placeholder="İş Emaili">
+            <button class="btn-gold" onclick="handleLogin()">Sistemə Daxil Ol</button>
+            <p style="margin-top:25px; font-size:12px; color:var(--gray); line-height:1.6; padding: 0 20px;">"Dahilər fürsəti gözləmir, onu yaradırlar. Kapitalınızı qlobal dövriyyəyə daxil edin."</p>
+        </div>
     </div>
 
-    <div id="appScreen" style="display:none; height:100%; flex-direction:column;">
+    <div id="appScreen" style="display:none;">
         <header>
-            <div><div style="font-family:'Playfair Display', serif; font-size:22px; color:var(--gold)">TrendDS</div></div>
-            <div style="text-align:right">
-                <div style="font-size:9px; color:var(--gray)">DÖVRİYYƏ</div>
-                <div style="font-size:20px; font-weight:800; color:var(--gold)">$<span id="hEarn">0.00</span></div>
+            <div style="font-family:'Playfair Display', serif; font-size:26px; color:var(--gold)">TrendDS</div>
+            <div class="bal-display">
+                <div style="font-size:9px; font-weight:800; color:var(--gray)">TOPLAM QAZANC</div>
+                <div class="bal-val">$<span id="hEarn">0.00</span></div>
             </div>
         </header>
 
-        <div id="mainContent">
+        <div class="container">
             <div id="v-home" class="view active">
                 <div class="biz-banner">
-                    <h2 style="color:var(--gold); font-size:16px; margin-bottom:8px;">Global Strategiya</h2>
-                    <p style="font-size:11px; color:var(--gray); line-height:1.5;">Hər bir müvəffəqiyyətli biznes cəsarətli bir addımla başlayır. Balansınızı idarə edin və dövriyyəni aktivləşdirin.</p>
+                    <h2 style="color:var(--gold); font-size:20px; margin-bottom:10px;">Milyonçu Strategiyası</h2>
+                    <p style="font-size:13px; color:var(--gray); line-height:1.6;">Biz sizin kapitalınızı dünyanın ən nəhəng ticarət şəbəkələrinə yönləndirərək professional dövriyyə yaradırıq. Pulunuz hər saniyə sizin üçün işləsin.</p>
                 </div>
 
                 <div class="stat-grid">
-                    <div class="stat-card"><span>SƏRMAYƏ</span><b id="sBal" style="font-size:18px; display:block;">$0.00</b></div>
-                    <div class="stat-card"><span>GÜNLÜK</span><b style="color:var(--neon); font-size:18px; display:block;">+1.5%</b></div>
+                    <div class="stat-card"><span>STRATEGİ BALANS</span><b id="sBal">$0.00</b></div>
+                    <div class="stat-card"><span>GÜNLÜK MARJA</span><b style="color:var(--neon)">+1.5%</b></div>
                 </div>
 
+                <div style="font-weight:900; font-size:14px; color:var(--gold); margin-bottom:15px; letter-spacing:1px; text-transform:uppercase;">Qlobal Satınalma Paketləri</div>
                 <div id="shopList"></div>
 
                 <div class="promo-panel">
-                    <h3 style="font-size:11px; color:var(--gold); margin-bottom:15px; font-weight:800;">KAPİTAL AKTİVASİYASI</h3>
-                    <input type="text" id="pCode" class="inp" placeholder="Promo Kod" style="text-align:center; margin-bottom:15px;">
-                    <button class="btn-gold" style="width:100%" onclick="applyPromo()">Balansı Yenilə</button>
+                    <h3 style="font-size:14px; color:var(--gold); margin-bottom:15px; font-weight:900;">KAPİTAL AKTİVASİYASI</h3>
+                    <input type="text" id="pCode" class="inp" placeholder="Aktivasiya Kodu" style="text-align:center;">
+                    <button class="btn-gold" style="width:100%" onclick="applyPromo()">BALANSI YÜKLƏ</button>
                 </div>
             </div>
 
             <div id="v-profile" class="view">
-                <div style="background:var(--card); padding:30px; border-radius:20px; text-align:center; border:1px solid #1f2937">
-                    <h2 id="uName" style="font-family:'Playfair Display', serif; font-size:24px;">...</h2>
-                    <p id="uEmail" style="color:var(--gray); font-size:13px; margin-top:5px;"></p>
+                <div style="background:var(--card); padding:40px; border-radius:25px; text-align:center; border:1px solid #1f2937">
+                    <div style="width:70px; height:70px; background:rgba(212,175,55,0.1); color:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px; font-size:32px;">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
+                    <h2 id="uName" style="font-family:'Playfair Display', serif; font-size:28px;">...</h2>
+                    <p id="uEmail" style="color:var(--gray); font-size:14px; margin-top:5px;"></p>
                 </div>
-                <button class="btn-gold" style="width:100%; margin-top:20px;" onclick="withdraw()">Çıxarış Et</button>
+                <button class="btn-gold" style="width:100%; margin-top:20px;" onclick="withdraw()">QAZANCI NAĞDLAŞDIR</button>
             </div>
         </div>
 
         <nav class="nav">
             <div class="nav-item active" onclick="nav('home', this)"><i class="fa-solid fa-gem"></i>Terminal</div>
             <div class="nav-item" onclick="nav('profile', this)"><i class="fa-solid fa-user-tie"></i>Profil</div>
-            <div class="nav-item" onclick="waRedirect('Salam, TrendDS mütəxəssis köməyi lazımdır')"><i class="fa-brands fa-whatsapp"></i>Dəstək</div>
+            <div class="nav-item" onclick="waRedirect('Salam, TrendDS köməyi lazımdır')"><i class="fa-brands fa-whatsapp"></i>Dəstək</div>
         </nav>
     </div>
 
     <script>
-        const API = "https://script.google.com/macros/s/AKfycbxfDhkOFY3x71QW9oeZTJkXGfE9HAJ97g9zdLICwAkGHRt-vHrkj_ncuVKr9kHymQ0/exec";
+        // SƏNİN API LİNKİN
+        const API = "https://script.google.com/macros/s/AKfycbw6gXUMslAGxWx21nUKzDhND279Yjv-VckDo8Y_fMEg-m7J35ocE8weS-mVeXLDzdR3/exec";
         const PHONE = "994507516137";
         let user = { name:"", email:"", balance:0, earned:0 };
 
-        const markets = [{n:"Amazon Elite", p:500}, {n:"Shopify Pro", p:400}, {n:"AliExpress Global", p:300}, {n:"Alibaba Gold", p:200}, {n:"Ozon Premium", p:100}, {n:"Ebay Basic", p:50}];
+        const markets = [
+            {n:"Amazon Elite", p:500}, {n:"Shopify Pro", p:400}, 
+            {n:"AliExpress Global", p:300}, {n:"Alibaba Gold", p:200},
+            {n:"Ozon Premium", p:100}, {n:"Ebay Basic", p:50}
+        ];
 
         async function handleLogin() {
             const n = document.getElementById('rName').value.trim(), e = document.getElementById('rEmail').value.trim();
             if(!n || !e) return alert("Xanaları doldurun!");
+            toggleLoader(true);
             try {
                 const response = await fetch(`${API}?action=login&name=${encodeURIComponent(n)}&email=${encodeURIComponent(e)}`);
                 const data = await response.json();
                 user = { name:n, email:e, balance:parseFloat(data.data.balance || 0), earned:parseFloat(data.data.earned || 0) };
                 startApp();
-            } catch(x) { alert("Sistem bağlantı xətası!"); }
+            } catch(x) { alert("Sistem bağlantı xətası! Google Sheet-i yoxlayın."); }
+            toggleLoader(false);
         }
 
         function startApp() {
             document.getElementById('authScreen').style.display='none';
-            document.getElementById('appScreen').style.display='flex';
+            document.getElementById('appScreen').style.display='block';
             document.getElementById('uName').innerText = user.name;
             document.getElementById('uEmail').innerText = user.email;
+            
             let html = "";
             markets.forEach(m => {
-                html += `<div class="p-card"><div><h3 style="font-size:14px;">${m.n}</h3><p style="color:var(--gold); font-weight:800;">$${m.p}</p></div><button class="btn-action" onclick="buyItem('${m.n}', ${m.p})">Aktiv et</button></div>`;
+                html += `<div class="package">
+                    <div class="p-info"><h3>${m.n}</h3><p class="p-price">$${m.p}.00</p></div>
+                    <button class="btn-buy" onclick="buyItem('${m.n}', ${m.p})">AKTİV ET</button>
+                </div>`;
             });
             document.getElementById('shopList').innerHTML = html;
             updateUI();
-            setInterval(autoGain, 60000);
+            setInterval(autoGain, 60000); 
         }
 
         function buyItem(name, price) {
             if(user.balance < price) {
-                alert(`BALANS ÇATMIR! Sizə əlavə $${(price - user.balance).toFixed(2)} lazımdır.`);
+                alert(`BALANS ÇATMIR! Sizə əlavə $${(price - user.balance).toFixed(2)} kapital lazımdır.`);
             } else {
-                if(confirm(`${name} aktiv edilsin?`)) {
+                if(confirm(`${name} dövriyyəsini aktivləşdirək?`)) {
                     user.balance -= price;
                     updateUI();
-                    sync("Investment: " + name);
-                    alert("Aktiv edildi!");
+                    sync("Buy: " + name);
+                    alert("Dövriyyə başladı!");
                 }
             }
         }
@@ -187,17 +232,19 @@
         async function applyPromo() {
             const c = document.getElementById('pCode').value.trim();
             if(!c) return;
+            toggleLoader(true);
             try {
-                const res = await fetch(`${API}?action=applyCode&code=${encodeURIComponent(c)}&email=${user.email}`);
-                const d = await res.json();
-                if(d.result === 'success') {
-                    user.balance += d.amount;
+                const response = await fetch(`${API}?action=applyCode&code=${encodeURIComponent(c)}&email=${user.email}`);
+                const data = await response.json();
+                if(data.result === 'success') {
+                    user.balance += data.amount;
                     updateUI();
-                    sync("Code Applied");
-                    alert(`+$${d.amount} əlavə edildi.`);
+                    sync("Code Bonus");
+                    alert(`Uğurlu! +$${data.amount} kapital əlavə edildi.`);
                     document.getElementById('pCode').value = "";
                 } else { alert("Yanlış kod!"); }
-            } catch(e) {}
+            } catch(e) { alert("Xəta!"); }
+            toggleLoader(false);
         }
 
         function updateUI() {
@@ -209,22 +256,26 @@
             if(user.balance > 0) {
                 user.earned += (user.balance * 0.015) / 1440;
                 updateUI();
-                sync("Auto Sync");
+                sync("Auto Profit");
             }
         }
 
         function sync(st) {
+            // Google Sheets-ə məlumatı göndərir
             fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${encodeURIComponent(st)}`, {mode:'no-cors'});
         }
 
         function waRedirect(m) { window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(m)}`, '_blank'); }
         function withdraw() { if(user.earned < 30) return alert("Min $30 qazanc lazımdır."); waRedirect(`$${user.earned.toFixed(2)} çıxarış istəyirəm.`); }
+        
         function nav(v, el) {
             document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
             document.getElementById('v-'+v).classList.add('active');
             el.classList.add('active');
+            window.scrollTo(0,0);
         }
+        function toggleLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
     </script>
 </body>
 </html>
