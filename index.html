@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* --- ƏSAS DİZAYN (QORUNUR) --- */
+        /* --- ƏSAS DİZAYN SİSTEMİ (TOXUNULMAZ) --- */
         :root {
             --primary: #0d47a1; --secondary: #1565c0; --success: #00c853; --danger: #d32f2f;
             --bg: #f3f4f6; --card-bg: #ffffff; --text: #1e293b; --gold: #FFD700;
@@ -18,7 +18,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; transition: 0.3s; }
 
-        /* --- MOBİL UYĞUNLAŞDIRMA --- */
+        /* --- UI ELEMENTLƏRİ --- */
         .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; }
         .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -42,11 +42,10 @@
         .globe { width: 100%; height: 100%; border-radius: 50%; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_Marble_2002.png/1024px-Blue_Marble_2002.png'); background-size: 200px; animation: spinGlobe 10s linear infinite; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         @keyframes spinGlobe { from { background-position: 0 0; } to { background-position: 200px 0; } }
 
-        /* FIX: Z-INDEX ARTIRILDI */
         .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
         canvas { width: 100%; height: 100px; }
         
-        /* FIX: MARKET GRID Z-INDEX ARTIRILDI VƏ POINTER EVENTS AKTİVLƏŞDİRİLDİ */
+        /* MOBİL UYĞUNLUQ ÜÇÜN DÜZƏLİŞLƏR */
         .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; }
         @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
 
@@ -61,7 +60,6 @@
         .ai-widget { position: fixed; bottom: 100px; right: 20px; width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 5px 20px rgba(13, 71, 161, 0.5); cursor: pointer; z-index: 6000; animation: bounce 2s infinite; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         
-        /* FIX: BUTTON POINTER EVENTS */
         .btn-main { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; touch-action: manipulation; position: relative; z-index: 30; }
         .btn-main:active { transform: scale(0.96); opacity: 0.9; }
         
@@ -94,7 +92,6 @@
         .chat-box { position: fixed; bottom: 90px; right: 20px; width: 300px; background: white; border-radius: 15px; box-shadow: 0 5px 30px rgba(0,0,0,0.2); z-index: 6000; display: none; padding: 15px; }
         .chat-header { font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; }
 
-        /* KONFETTİ */
         .confetti { position: fixed; width: 10px; height: 10px; background-color: #f00; animation: fall linear forwards; z-index: 24000; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
 
@@ -293,6 +290,8 @@
                      <div class="skeleton" style="height:50px; margin-bottom:10px;"></div>
                      <div class="skeleton" style="height:50px; margin-bottom:10px;"></div>
                  </div>
+                 
+                 <button class="btn-main" onclick="logout()" style="background:#444; margin-top:20px;">Log Out</button>
             </div>
             <div style="height:100px;"></div>
         </div>
@@ -311,8 +310,20 @@
     </div>
 
     <script>
-        // --- PRELOADER & SCROLL ---
-        window.onload = () => { setTimeout(() => { document.getElementById('cookieBanner').classList.add('show'); }, 3000); };
+        const STORAGE_KEY = 'trendds_forever_session_v4'; // Key for permanent login
+
+        // --- PRELOADER & AUTO LOGIN ---
+        window.onload = () => { 
+            setTimeout(() => { document.getElementById('cookieBanner').classList.add('show'); }, 3000); 
+            
+            // FOREVER LOGIN CHECK
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if(savedData) {
+                user = JSON.parse(savedData);
+                initApp(); // Skip login if data exists
+            }
+        };
+
         window.onscroll = () => {
             let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -394,7 +405,19 @@
                 const res = await fetch(`${API}?action=login&name=${n}&email=${e}`);
                 const data = await res.json();
                 user.name=n; user.email=e; user.balance=parseFloat(data.data.balance||0); user.earned=parseFloat(data.data.earned||0);
-                try { const s = localStorage.getItem('tds_fix_final_'+e); if(s) { const p = JSON.parse(s); if(p.investments) user.investments=p.investments; if(p.lastWithdraw) user.lastWithdraw=p.lastWithdraw; } } catch(e){}
+                
+                // Attempt to merge with local data if it exists
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if(saved) { 
+                    const p = JSON.parse(saved); 
+                    if(p.email === e) { // Only merge if same email
+                        user.investments = p.investments || []; 
+                        user.lastWithdraw = p.lastWithdraw || 0;
+                        user.earned = Math.max(user.earned, p.earned || 0); // Keep local earned if higher
+                    }
+                }
+                
+                saveData(); // Save immediately for persistence
                 initApp();
             } catch(e){ alert("Connection Error"); initApp(); }
         }
@@ -405,7 +428,16 @@
             document.getElementById('dispName').innerText = user.name;
             document.getElementById('cardName').innerText = user.name;
             renderGrid(); updateUI();
+            
+            // RUN CALCULATOR EVERY SECOND
             setInterval(calcRewards, 1000);
+        }
+
+        function logout() {
+            if(confirm("Exit secure session?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
         }
 
         function renderGrid() {
@@ -425,9 +457,14 @@
             });
         }
 
+        // --- SECOND BY SECOND PROFIT CALCULATION ---
         function calcRewards() {
             if(user.investments.length>0) {
-                user.investments.forEach(i => user.earned += (i.amount*0.015)/86400);
+                user.investments.forEach(i => {
+                    // Daily 1.5% -> per second
+                    const perSecond = (i.amount * 0.015) / 86400; 
+                    user.earned += perSecond;
+                });
                 updateUI(); saveData();
             }
         }
@@ -439,7 +476,6 @@
                 if(confirm("Insufficient Balance. Deposit?")) switchView('cabinet'); 
                 return; 
             }
-            // Direct Logic No Native Confirm
             user.balance-=p; 
             user.investments.push({name:n, amount:p, time:Date.now()});
             
@@ -476,12 +512,14 @@
 
         function updateUI() {
             if(!privacy) document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
-            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(4);
+            // 6 DECIMAL PLACES FOR LIVE EFFECT
+            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6);
+            
             let html="";
             user.investments.forEach((i, index)=>{
                 let days = Math.floor((Date.now()-i.time)/(86400000));
                 let isLocked = days < 30;
-                let btnHtml = isLocked ? `<span style="color:red;font-size:10px;"><i class="fas fa-lock"></i> Locked (${30-days}d)</span>` : `<button onclick="withdrawPrincipal(${index})" style="background:var(--dark);color:white;border:none;border-radius:4px;padding:5px 10px;font-size:10px;cursor:pointer;">Withdraw Principal</button>`;
+                let btnHtml = isLocked ? `<span style="color:red;font-size:10px;"><i class="fas fa-lock"></i> Locked (${30-days}d)</span>` : `<button onclick="withdrawPrincipal(${index})" style="background:var(--dark);color:white;border:none;border-radius:4px;padding:2px 5px;font-size:10px;cursor:pointer;">Withdraw Principal</button>`;
                 
                 html+=`<div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;">
                     <div><b>${i.name}</b><br><span style="color:#666">$${i.amount}</span></div>
@@ -501,7 +539,6 @@
         
         function handleWithdraw() { 
             if(user.earned<20) return alert("Minimum withdrawal is $20"); 
-            // 3 Day Rule
             if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Profit withdrawal allowed every 3 days.");
             
             let a = prompt("Profit Withdrawal Amount ($):"); 
@@ -518,7 +555,9 @@
         
         async function applyPromo() { let c = document.getElementById('pCode').value; if(!c) return; try { let r = await fetch(`${API}?action=applyCode&code=${c}&email=${user.email}`); let d = await r.json(); if(d.result==='success') { user.balance+=d.amount; updateUI(); saveData(); sync("Code applied"); alert("Success!"); playSound(); } else alert("Invalid Code"); } catch(e){} }
         
-        function saveData() { localStorage.setItem('tds_fix_final_'+user.email, JSON.stringify({investments:user.investments, lastWithdraw:user.lastWithdraw})); }
+        // PERSISTENT STORAGE
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(user)); }
+        
         function sync(s) { fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${s}`, {mode:'no-cors'}); }
         function switchView(v,b) { document.getElementById('view-home').style.display = v==='home'?'block':'none'; document.getElementById('view-cabinet').style.display = v==='cabinet'?'block':'none'; document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); if(b) b.classList.add('active'); }
         function contactSupport() { window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Support needed`; }
