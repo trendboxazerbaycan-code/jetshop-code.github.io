@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* --- ƏSAS DİZAYN SİSTEMİ (QORUNUR) --- */
+        /* --- ƏSAS DİZAYN SİSTEMİ --- */
         :root {
             --primary: #0d47a1; --secondary: #1565c0; --success: #00c853; --danger: #d32f2f;
             --bg: #f3f4f6; --card-bg: #ffffff; --text: #1e293b; --gold: #FFD700;
@@ -18,14 +18,41 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; transition: 0.3s; }
 
-        /* --- UI ELEMENTLƏRİ --- */
+        /* --- FIX: MARKET GRID VISIBILITY --- */
+        .market-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            padding: 20px; 
+            position: relative; 
+            z-index: 100; /* Ən önə gətirildi */
+            min-height: 400px; /* Yer tutması üçün */
+        }
+        @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
+
+        .item-card { 
+            background: var(--card-bg); 
+            border-radius: 16px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 25px rgba(0,0,0,0.08); /* Kölgə artırıldı */
+            transition: 0.2s; 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 101;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .item-img { width: 100%; height: 110px; object-fit: cover; }
+        .item-body { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+
+        /* --- UI STYLES --- */
         .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 20px; }
         .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
-        #cinematicLoader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.5s; }
+        #cinematicLoader { position: fixed; inset: 0; background: #000; z-index: 99999; display: flex; align-items: center; justify-content: center; flex-direction: column; animation: fadeOutLoader 1s ease 2.5s forwards; }
         .brand-anim { font-size: 40px; font-weight: 900; color: white; letter-spacing: 5px; animation: textExpand 2s ease-out; }
-        @keyframes textExpand { 0% { letter-spacing: 0px; opacity: 0; } 100% { letter-spacing: 5px; opacity: 1; } }
+        @keyframes fadeOutLoader { to { opacity: 0; visibility: hidden; } }
 
         #scrollProgress { position: fixed; top: 0; left: 0; height: 3px; background: var(--gold); z-index: 10000; width: 0%; transition: 0.1s; }
 
@@ -42,16 +69,8 @@
         .globe { width: 100%; height: 100%; border-radius: 50%; background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_Marble_2002.png/1024px-Blue_Marble_2002.png'); background-size: 200px; animation: spinGlobe 10s linear infinite; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         @keyframes spinGlobe { from { background-position: 0 0; } to { background-position: 200px 0; } }
 
-        .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
+        .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 50; }
         canvas { width: 100%; height: 100px; }
-        
-        /* MARKET GRID FIXED */
-        .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; min-height: 300px; }
-        @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
-
-        .item-card { background: var(--card-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.2s; position: relative; display: flex; flex-direction: column; }
-        .item-img { width: 100%; height: 100px; object-fit: cover; }
-        .item-body { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
         .social-toast { position: fixed; bottom: 80px; left: 20px; background: rgba(0,0,0,0.8); color: white; padding: 10px 15px; border-radius: 50px; font-size: 11px; display: flex; align-items: center; gap: 10px; z-index: 8000; opacity: 0; transform: translateY(20px); transition: 0.5s; pointer-events: none; }
         .social-toast.show { opacity: 1; transform: translateY(0); }
@@ -194,7 +213,11 @@
             </div>
 
             <h4 style="padding:0 20px; margin-bottom:10px;">İnvestisiya Paketləri</h4>
-            <div class="market-grid" id="marketGrid"></div>
+            <div class="market-grid" id="marketGrid">
+                <div style="grid-column: span 2; text-align:center; padding:20px; color:#999;">
+                    <i class="fas fa-spinner fa-spin"></i> Bazarlar yüklənir...
+                </div>
+            </div>
             <div style="height:100px;"></div>
         </div>
 
@@ -257,7 +280,9 @@
                  </div>
 
                  <h4 style="margin-top:20px;">Aktiv Portfelim</h4>
-                 <div id="portfolioList"></div>
+                 <div id="portfolioList">
+                     <div class="skeleton" style="height:50px; margin-bottom:10px;"></div>
+                 </div>
 
                  <h4 style="margin-top:20px;">Əməliyyat Tarixçəsi</h4>
                  <div id="historyList" class="glass-panel" style="padding:10px; max-height:200px; overflow-y:auto;">
@@ -279,19 +304,20 @@
     </div>
 
     <script>
-        // STORAGE KEY - CHANGED TO FORCE REFRESH
-        const STORAGE_KEY = 'trendds_secure_v9'; 
+        const STORAGE_KEY = 'trendds_forever_db_v10'; // NEW KEY FOR CLEAN START
 
         // --- PRELOADER & AUTO LOGIN ---
         window.onload = () => { 
-            // Hide preloader animation
             setTimeout(() => { 
                 document.getElementById('cinematicLoader').style.opacity = '0';
                 setTimeout(() => document.getElementById('cinematicLoader').style.display = 'none', 500);
-            }, 2500);
+            }, 2000); // Faster loader for UX
 
             setTimeout(() => { document.getElementById('cookieBanner').classList.add('show'); }, 3000); 
             
+            // FORCE RENDER GRID IMMEDIATELY
+            renderGrid();
+
             const savedData = localStorage.getItem(STORAGE_KEY);
             if(savedData) {
                 user = JSON.parse(savedData);
@@ -389,7 +415,7 @@
             document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2);
         }
 
-        // --- LOGIN (ROBUST) ---
+        // --- LOGIN ---
         function startBiometricLogin() {
             const btn = document.querySelector('.auth-card button');
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> SCANNING...`;
@@ -399,27 +425,15 @@
         async function handleLogin() {
             const n = document.getElementById('rName').value, e = document.getElementById('rEmail').value;
             if(!n || !e) return alert("Xanaları doldurun");
-            
             try {
-                // Try to fetch from server
                 const res = await fetch(`${API}?action=login&name=${n}&email=${e}`);
                 const data = await res.json();
+                user.name=n; user.email=e; user.balance=parseFloat(data.data.balance||0); user.earned=parseFloat(data.data.earned||0);
                 
-                // Server response logic
-                let serverBal = parseFloat(data.data.balance || 0);
-                
-                // Initialize User
-                user.name = n; 
-                user.email = e;
-                user.balance = serverBal;
-                user.earned = parseFloat(data.data.earned || 0);
-
-                // Local Storage Merge (If exists)
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if(saved) { 
                     const p = JSON.parse(saved); 
                     if(p.email === e) { 
-                        // Preserve local changes if they are more recent/higher
                         if(p.balance > user.balance) user.balance = p.balance;
                         user.earned = Math.max(user.earned, p.earned || 0);
                         user.investments = p.investments || []; 
@@ -432,22 +446,7 @@
                 
                 saveData(); 
                 initApp();
-            } catch(e) {
-                console.log("Offline Login Triggered");
-                // Offline Logic: Just check local storage
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if(saved) {
-                    const p = JSON.parse(saved);
-                    if(p.email === e) {
-                        user = p;
-                        initApp();
-                        return;
-                    }
-                }
-                // If totally new and offline, allow entry with 0
-                user.name = n; user.email = e;
-                initApp();
-            }
+            } catch(e){ alert("Connection Error"); initApp(); }
         }
 
         function initApp() {
@@ -457,10 +456,6 @@
             document.getElementById('cardName').innerText = user.name;
             renderGrid(); 
             updateUI();
-            
-            // Render existing history on load
-            renderHistory();
-
             setInterval(calcRewards, 1000);
         }
 
@@ -471,6 +466,7 @@
             }
         }
 
+        // --- GRID RENDER FIX ---
         function renderGrid() {
             const g = document.getElementById('marketGrid'); g.innerHTML="";
             markets.forEach(m=>{
@@ -504,7 +500,6 @@
                 if(confirm("Cüzdan balansınız çatmır. Artırmaq üçün cüzdana keçilsin?")) switchView('cabinet'); 
                 return; 
             }
-            
             user.balance -= p; 
             user.investments.push({name:n, amount:p, time:Date.now()});
             addToHistory("İnvestisiya", `-$${p}`);
@@ -549,20 +544,14 @@
                 
                 html+=`<div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;"><div><b>${i.name}</b><br><span style="color:#666">$${i.amount}</span></div><div>${btnHtml}</div></div>`;
             });
-            document.getElementById('portfolioList').innerHTML=html || "<div style='text-align:center; color:#999; font-size:12px;'>Hələ ki investisiya yoxdur</div>";
+            document.getElementById('portfolioList').innerHTML=html || "Hələ ki investisiya yoxdur.";
 
-            renderHistory();
-        }
-
-        function renderHistory() {
             let hHtml = "";
             if(user.history && user.history.length > 0) {
                 user.history.forEach(h => { 
                     hHtml += `<div class="history-item"><span class="history-type">${h.type} <br><span class="history-time">${h.time}</span></span> <span>${h.amount}</span></div>`; 
                 });
-            } else {
-                hHtml = "<div style='text-align:center;color:#999; font-size:12px;'>Tarixçə boşdur</div>";
-            }
+            } else { hHtml = "<div style='text-align:center;color:#999; font-size:12px;'>Tarixçə boşdur</div>"; }
             document.getElementById('historyList').innerHTML = hHtml;
         }
 
