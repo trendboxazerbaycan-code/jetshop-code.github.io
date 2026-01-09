@@ -252,6 +252,35 @@
             font-size: 12px;
             margin-top: 3px;
         }
+
+        /* YENİ: GÜNDƏLİK GƏLİR ÇIXARIŞ BUTONU */
+        .daily-profit-btn {
+            background: linear-gradient(135deg, #9c27b0, #673ab7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .daily-profit-btn:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+        .daily-profit-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
@@ -521,6 +550,54 @@
                 </div>
             </div>
 
+            <!-- YENİ: GÜNDƏLİK GƏLİR ÇIXARIŞ KARTI -->
+            <div style="padding:0 20px; margin-top:15px;">
+                <div style="background:linear-gradient(135deg, #9c27b0, #673ab7); color:white; padding:15px; border-radius:12px; box-shadow:0 5px 20px rgba(156, 39, 176, 0.3);">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                        <i class="fas fa-calendar-day" style="font-size:20px;"></i>
+                        <div>
+                            <div style="font-weight:bold; font-size:14px;">GÜNDƏLİK GƏLİR ÇIXARIŞI</div>
+                            <div style="font-size:10px; opacity:0.9;">3 gündən bir, minimum $20</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background:rgba(255,255,255,0.1); padding:10px; border-radius:8px; margin-bottom:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px;">
+                            <span>Günlük gəlir:</span>
+                            <span id="dailyProfitAmount" style="font-weight:bold;">$0.00</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; font-size:11px;">
+                            <span>Son çıxarış:</span>
+                            <span id="lastDailyWithdraw" style="font-size:10px;">Heç vaxt</span>
+                        </div>
+                    </div>
+                    
+                    <button class="daily-profit-btn" onclick="withdrawDailyProfit()" id="dailyProfitBtn">
+                        <i class="fas fa-wallet"></i> GÜNDƏLİK GƏLİRİ ÇƏK
+                    </button>
+                    
+                    <div style="font-size:9px; opacity:0.7; margin-top:8px; text-align:center; padding:5px; background:rgba(0,0,0,0.2); border-radius:5px;">
+                        ⚠️ WhatsApp-a yönləndirilən məlumatı dəyişmək QADAĞANDIR
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visa kartından SONRA bu hissəni əlavə et -->
+            <div style="padding:0 20px; margin-top:10px;">
+                <div style="background:rgba(255, 193, 7, 0.1); border:1px solid #ffc107; border-radius:10px; padding:12px; font-size:11px; color:#856404;">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:5px;">
+                        <i class="fas fa-exclamation-triangle" style="color:#ffc107;"></i>
+                        <strong>MÜHÜM QAYDALAR:</strong>
+                    </div>
+                    <div style="font-size:10px; line-height:1.4;">
+                        1. WhatsApp-a yönləndirilən məlumatı <strong style="color:#d32f2f;">DƏYİŞMƏK QADAĞANDIR</strong><br>
+                        2. Avtomatik göndərilən formada məlumatlar düzgün qeyd olunub<br>
+                        3. Məlumatı dəyişdikdə, balansınız <strong>SIFIRLANACAQ</strong><br>
+                        4. Yalnız öz hesabınız üçün çıxarış edin
+                    </div>
+                </div>
+            </div>
+
             <div style="padding:0 20px; margin-top:20px;">
                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
                      <button class="btn-main" onclick="requestDeposit()" style="background:#25D366;"><i class="fab fa-whatsapp"></i> Artır</button>
@@ -685,6 +762,9 @@
             // ✅ AKTİV SERMAYƏLƏR (30 günlük investisiya)
             investments: [], 
             lastWithdraw: 0, 
+            // YENİ: Gündəlik gəlir çıxarışı üçün
+            lastDailyProfitWithdraw: 0,
+            dailyProfitWithdrawCount: 0,
             history: [],
             cardName: "USER NAME", 
             cardNum: "4455 •••• •••• 9012", 
@@ -798,6 +878,109 @@
             cabinetLockMessage.style.display = 'block';
             if (document.body.getAttribute('data-theme') === 'dark') {
                 cabinetLockMessage.classList.add('dark');
+            }
+        }
+
+        // --- YENİ: GÜNDƏLİK GƏLİR ÇIXARIŞI ---
+        function calculateDailyProfit() {
+            const totalInvested = user.investments.reduce((a,b) => a + b.amount, 0);
+            const dailyProfit = totalInvested * 0.015; // Günlük 1.5%
+            return dailyProfit;
+        }
+
+        function updateDailyProfitUI() {
+            const dailyProfit = calculateDailyProfit();
+            const dailyProfitBtn = document.getElementById('dailyProfitBtn');
+            const dailyProfitAmount = document.getElementById('dailyProfitAmount');
+            const lastDailyWithdraw = document.getElementById('lastDailyWithdraw');
+            
+            // Günlük gəliri göstər
+            dailyProfitAmount.innerText = "$" + dailyProfit.toFixed(2);
+            
+            // Son çıxarış tarixini göstər
+            if (user.lastDailyProfitWithdraw > 0) {
+                const lastDate = new Date(user.lastDailyProfitWithdraw);
+                lastDailyWithdraw.innerText = lastDate.toLocaleDateString('az-AZ') + " " + lastDate.toLocaleTimeString('az-AZ', {hour: '2-digit', minute:'2-digit'});
+            } else {
+                lastDailyWithdraw.innerText = "Heç vaxt";
+            }
+            
+            // Buton statusunu tənzimlə
+            if (dailyProfit < 20) {
+                dailyProfitBtn.disabled = true;
+                dailyProfitBtn.innerHTML = `<i class="fas fa-lock"></i> MIN. $20 GƏRƏKLİ`;
+                dailyProfitBtn.title = "Minimum $20 günlük gəlir tələb olunur";
+            } else if (user.lastDailyProfitWithdraw && (Date.now() - user.lastDailyProfitWithdraw) < (3 * 24 * 60 * 60 * 1000)) {
+                dailyProfitBtn.disabled = true;
+                const nextWithdraw = new Date(user.lastDailyProfitWithdraw + (3 * 24 * 60 * 60 * 1000));
+                const timeLeft = nextWithdraw - Date.now();
+                const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                dailyProfitBtn.innerHTML = `<i class="fas fa-clock"></i> ${hoursLeft} SAAT QALIB`;
+                dailyProfitBtn.title = `Növbəti çıxarış: ${nextWithdraw.toLocaleDateString('az-AZ')}`;
+            } else {
+                dailyProfitBtn.disabled = false;
+                dailyProfitBtn.innerHTML = `<i class="fas fa-wallet"></i> GÜNDƏLİK GƏLİRİ ÇƏK ($${dailyProfit.toFixed(2)})`;
+            }
+        }
+
+        function withdrawDailyProfit() {
+            vibe();
+            
+            const dailyProfit = calculateDailyProfit();
+            
+            // Minimum məbləğ yoxlaması
+            if (dailyProfit < 20) {
+                alert("❌ Minimum çıxarış məbləği: $20\nGünlük gəliriniz: $" + dailyProfit.toFixed(2));
+                return;
+            }
+            
+            // 3 gün gözləmə yoxlaması
+            if (user.lastDailyProfitWithdraw && (Date.now() - user.lastDailyProfitWithdraw) < (3 * 24 * 60 * 60 * 1000)) {
+                const nextWithdraw = new Date(user.lastDailyProfitWithdraw + (3 * 24 * 60 * 60 * 1000));
+                alert("⏳ Gündəlik gəliri 3 gündən bir çəkə bilərsiniz!\n\n" +
+                      "📅 Son çıxarış: " + new Date(user.lastDailyProfitWithdraw).toLocaleDateString('az-AZ') + "\n" +
+                      "✅ Növbəti çıxarış: " + nextWithdraw.toLocaleDateString('az-AZ'));
+                return;
+            }
+            
+            // Təsdiq mesajı
+            if (confirm(`💰 GÜNDƏLİK GƏLİRİ ÇƏKMEK İSTƏYİRSİNİZ?\n\n` +
+                       `📊 Məbləğ: $${dailyProfit.toFixed(2)}\n` +
+                       `⏰ Müddət: 3 gündən bir\n\n` +
+                       `⚠️ WhatsApp-a yönləndirilən məlumatı DƏYİŞMƏK QADAĞANDIR!\n` +
+                       `📱 Məlumat forması avtomatik göndəriləcək.`)) {
+        
+                // WhatsApp mesajı hazırla
+                const message = `Gündəlik gəlir çıxarışı: $${dailyProfit.toFixed(2)} (${user.email})\n` +
+                               `Tarix: ${new Date().toLocaleDateString('az-AZ')}\n` +
+                               `Günlük gəlir faizi: 1.5%\n` +
+                               `Ümumi investisiya: $${user.totalInvested.toFixed(2)}\n\n` +
+                               `⚠️ BU MƏLUMATI DƏYİŞDİRMƏYİN!`;
+                
+                // WhatsApp-a yönləndir
+                window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(message)}`, '_blank');
+                
+                // Gəliri DİSPONİBİL BALANSA əlavə et
+                user.availableBalance += dailyProfit;
+                
+                // Çıxarış tarixini qeyd et
+                user.lastDailyProfitWithdraw = Date.now();
+                user.dailyProfitWithdrawCount = (user.dailyProfitWithdrawCount || 0) + 1;
+                
+                // Tarixçəyə əlavə et
+                addToHistory("Gündəlik Gəlir Çıxarışı", `+$${dailyProfit.toFixed(2)}`);
+                
+                // UI və məlumatları yenilə
+                updateUI();
+                saveData();
+                
+                sync(`Daily Profit Withdraw: $${dailyProfit.toFixed(2)}`);
+                
+                // Uğur mesajı
+                alert(`✅ Uğurlu! $${dailyProfit.toFixed(2)} gündəlik gəlir çəkildi.\n\n` +
+                      `💰 Məbləğ Disponibil Balansa əlavə edildi.\n` +
+                      `📅 Növbəti çıxarış 3 gün sonra mümkündür.\n\n` +
+                      `⚠️ WhatsApp-da məlumat formasını DƏYİŞMƏYİN!`);
             }
         }
 
@@ -961,6 +1144,7 @@
         function liveUpdate() {
             calculateProfit();
             updateUI();
+            updateDailyProfitUI(); // <-- BU SƏTRİ ƏLAVƏ ET
             
             if (user.totalInvested > 0) {
                 const profitPerSecond = (user.totalInvested * 0.015) / 86400;
@@ -1009,6 +1193,9 @@
                         user.earned = Math.max(user.earned, savedUser.earned || 0);
                         user.investments = savedUser.investments || []; 
                         user.lastWithdraw = savedUser.lastWithdraw || 0;
+                        // YENİ: Gündəlik gəlir çıxarış məlumatlarını yüklə
+                        user.lastDailyProfitWithdraw = savedUser.lastDailyProfitWithdraw || 0;
+                        user.dailyProfitWithdrawCount = savedUser.dailyProfitWithdrawCount || 0;
                         user.cardName = savedUser.cardName || user.name;
                         user.cardNum = savedUser.cardNum || "4455 •••• •••• 9012";
                         user.history = savedUser.history || [];
@@ -1040,6 +1227,7 @@
             calculateProfit();
             renderGrid(); 
             updateUI();
+            updateDailyProfitUI(); // <-- BU SƏTRİ ƏLAVƏ ET
             
             setInterval(liveUpdate, 1000);
             
@@ -1238,6 +1426,9 @@
             document.getElementById('historyList').innerHTML = historyHtml;
             
             showInvestmentLockMessage();
+            
+            // YENİ: Gündəlik gəlir UI-ni yenilə
+            updateDailyProfitUI();
         }
 
         function toggleTheme() { 
