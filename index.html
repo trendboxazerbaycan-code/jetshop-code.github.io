@@ -18,7 +18,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; transition: 0.3s; }
 
-        /* UI Elementləri */
+        /* --- UI ELEMENTLƏRİ --- */
         .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 20px; }
         .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
@@ -45,8 +45,8 @@
         .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
         canvas { width: 100%; height: 100px; }
         
-        /* Grid */
-        .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; }
+        /* MARKET GRID (GÖRÜNMƏ PROBLEMİ HƏLL EDİLDİ) */
+        .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; min-height: 200px; }
         @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
 
         .item-card { background: var(--card-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.2s; position: relative; display: flex; flex-direction: column; }
@@ -226,13 +226,20 @@
 
             <div class="profile-header" style="border:none; padding-top:0; text-align:center;">
                 <h3 id="dispName">User</h3>
-                <div style="font-size:11px; color:#999;">Cüzdan Balansı (Əsas)</div>
-                <div style="font-size:30px; font-weight:800; margin-top:5px;" id="dispBalance">$0.00</div>
                 
-                <div class="glass-panel" style="margin:20px 20px 0 20px; padding:15px; background: rgba(0, 200, 83, 0.1); border:1px solid rgba(0,200,83,0.2);">
-                    <div style="font-size:12px; color:var(--success); font-weight:bold;">Canlı Faiz Qazancı (Gözləmədə)</div>
-                    <div style="font-size:24px; font-weight:800; color:var(--success); margin:5px 0;" id="dispEarned">$0.000000</div>
-                    <button class="btn-main btn-sm" style="background:var(--success); width:100%; margin-top:5px;" onclick="claimProfit()">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin: 10px 20px;">
+                    <div style="background:white; padding:10px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                        <div style="font-size:10px; color:#999;">ƏSAS BALANS (Cüzdan)</div>
+                        <div style="font-size:18px; font-weight:800;" id="dispBalance">$0.00</div>
+                    </div>
+                    <div style="background:white; padding:10px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                        <div style="font-size:10px; color:var(--success);">YIĞILAN FAİZ (Canlı)</div>
+                        <div style="font-size:18px; font-weight:800; color:var(--success);" id="dispEarned">$0.000000</div>
+                    </div>
+                </div>
+
+                <div style="margin:0 20px;">
+                    <button class="btn-main btn-sm" style="background:linear-gradient(90deg, #00c853, #009624); width:100%; box-shadow:0 4px 15px rgba(0,200,83,0.3);" onclick="claimProfit()">
                         <i class="fas fa-download"></i> Qazancı Balansa Köçür
                     </button>
                 </div>
@@ -274,14 +281,17 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'trendds_db_v6'; 
+        const STORAGE_KEY = 'trendds_db_eternal_v7'; // YENİ DAİMİ AÇAR
 
         // --- PRELOADER & AUTO LOGIN ---
         window.onload = () => { 
             setTimeout(() => { document.getElementById('cookieBanner').classList.add('show'); }, 3000); 
+            
+            // EBEDİ GİRİŞ YOXLANIŞI
             const savedData = localStorage.getItem(STORAGE_KEY);
             if(savedData) {
                 user = JSON.parse(savedData);
+                // Məlumat varsa, birbaşa tətbiqi başlat
                 initApp(); 
             }
         };
@@ -394,7 +404,7 @@
                     if(p.email === e) { 
                         user.investments = p.investments || []; 
                         user.lastWithdraw = p.lastWithdraw || 0;
-                        user.earned = Math.max(user.earned, p.earned || 0);
+                        user.earned = Math.max(user.earned, p.earned || 0); // Keep local earned
                         user.cardName = p.cardName || user.name;
                         user.cardNum = p.cardNum || "4455 •••• •••• 9012";
                         user.history = p.history || [];
@@ -442,6 +452,7 @@
         function calcRewards() {
             if(user.investments.length>0) {
                 user.investments.forEach(i => {
+                    // Saniyəlik artım (yalnız EARNED balansına)
                     const perSecond = (i.amount * 0.015) / 86400; 
                     user.earned += perSecond;
                 });
@@ -451,13 +462,13 @@
 
         function invest(n,p) {
             vibe();
-            // STRICT BALANCE CHECK
+            // STRICT BALANCE CHECK (Balans Cüzdandan çıxılır)
             if(user.balance < p) { 
-                if(confirm("Balansınız kifayət etmir. Artırmaq üçün cüzdana keçilsin?")) switchView('cabinet'); 
+                if(confirm("Əsas Balansda (Cüzdan) kifayət qədər vəsait yoxdur. Artırmaq istəyirsiniz?")) switchView('cabinet'); 
                 return; 
             }
             
-            user.balance -= p; // Deduct from balance
+            user.balance -= p; 
             user.investments.push({name:n, amount:p, time:Date.now()});
             addToHistory("İnvestisiya", `-$${p}`);
             
@@ -470,9 +481,10 @@
         function withdrawPrincipal(index) {
             vibe();
             let inv = user.investments[index];
-            // 30 DAY LOCK IS VISUALLY HANDLED IN UI, BUT DOUBLE CHECK HERE
             let days = Math.floor((Date.now()-inv.time)/(86400000));
-            if(days < 30) return alert("Sərmayə 30 gün kilidli qalır.");
+            
+            // 30 DAY LOCK ENFORCEMENT
+            if(days < 30) return alert(`Bu sərmayə hələ kilidlidir. ${30-days} gün qalıb.`);
 
             if(confirm(`Ana pulu ($${inv.amount}) çəkmək istəyirsiniz? Gəlir dayanacaq.`)) {
                 user.investments.splice(index, 1);
@@ -484,14 +496,14 @@
         }
 
         function updateUI() {
-            // Update Headers
+            // Update Headers (Balanslar Ayrılıb)
             document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
-            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6);
+            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6); // Canlı artım görünür
             
             // Update Card
             document.getElementById('cardNameDisplay').innerText = user.cardName;
             document.getElementById('cardNumDisplay').innerText = user.cardNum;
-            document.getElementById('cardBalanceDisplay').innerText = "$"+user.balance.toFixed(2); // Card shows Main Balance
+            document.getElementById('cardBalanceDisplay').innerText = "$"+user.balance.toFixed(2);
 
             // Render Portfolio
             let html="";
@@ -532,13 +544,13 @@
         
         function handleWithdraw() { 
             // PROFIT WITHDRAW RULE: Min 20, Every 3 Days
-            if(user.earned<20) return alert("Minimum qazanc çıxarışı $20-dır. Balansa köçürdükdən sonra çıxara bilərsiniz."); 
+            if(user.earned<20 && user.balance < 20) return alert("Minimum çıxarış $20-dır. Balansa köçürdükdən sonra çıxara bilərsiniz."); 
             if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Faiz çıxarışı 3 gündən bir mümkündür.");
             
             let a = prompt("Məbləğ ($):"); 
             if(a) {
                 let amount = parseFloat(a);
-                if(isNaN(amount) || amount > user.balance) return alert("Əsas balansda kifayət qədər vəsait yoxdur.");
+                if(isNaN(amount) || amount > user.balance) return alert("Əsas balansda kifayət qədər vəsait yoxdur. Qazancınızı balansa köçürdünüzmü?");
                 
                 user.balance -= amount;
                 user.lastWithdraw = Date.now();
