@@ -79,6 +79,32 @@
         .visa-card { background: linear-gradient(135deg, #1a1a1a, #333); color: white; border-radius: 15px; padding: 20px; margin: 0 20px 20px 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid #444; overflow: hidden; transition: 0.5s; height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
         .visa-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #FFD700, #B8860B); border-radius: 5px; }
         .card-balance { font-size: 28px; font-weight: 800; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+        
+        /* YENİ: PUL ÇƏK BUTONU KART ÜZƏRİNDƏ */
+        .card-withdraw-btn {
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 6px 15px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(211, 47, 47, 0.3);
+            transition: all 0.3s;
+            z-index: 10;
+        }
+        .card-withdraw-btn:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+        .card-withdraw-btn:hover {
+            background: linear-gradient(135deg, #b71c1c, #8b0000);
+            box-shadow: 0 5px 15px rgba(211, 47, 47, 0.4);
+        }
 
         /* QAZANC KARTI */
         .profit-card { background: linear-gradient(135deg, #00c853, #009624); color: white; border-radius: 15px; padding: 20px; margin: 0 20px; position: relative; box-shadow: 0 10px 30px rgba(0,200,83,0.3); overflow: hidden; cursor: pointer; }
@@ -199,6 +225,33 @@
             color: white !important;
             animation: pulse 1.5s infinite !important;
         }
+        
+        /* YENİ: BALANS TİPLƏRİ GÖSTƏRİCİSİ */
+        .balance-types {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 20px;
+            font-size: 11px;
+            color: #666;
+        }
+        .balance-type {
+            text-align: center;
+            flex: 1;
+            padding: 5px;
+            border-radius: 8px;
+            background: rgba(0,0,0,0.03);
+            margin: 0 5px;
+        }
+        .balance-type.active {
+            background: rgba(13, 71, 161, 0.1);
+            border: 1px solid rgba(13, 71, 161, 0.3);
+        }
+        .balance-type .value {
+            font-weight: bold;
+            color: var(--text);
+            font-size: 12px;
+            margin-top: 3px;
+        }
     </style>
 </head>
 <body>
@@ -271,7 +324,7 @@
         </div>
 
         <div id="view-home" style="display:block;">
-            <!-- YENİ: MOTİVASİYA BANNERİ -->
+            <!-- MOTİVASİYA BANNERİ -->
             <div class="motivation-banner animate__animated animate__fadeIn">
                 <span class="success-badge">🔥 TRENDING</span>
                 <h3>🚀 MİLYONÇU OLMAQ ÜÇÜN İLK ADDIM!</h3>
@@ -309,7 +362,7 @@
                 <p>AI-Powered Asset Management</p>
             </div>
 
-            <!-- YENİ: INVESTİSİYA QEYD MESAJI -->
+            <!-- INVESTİSİYA QEYD MESAJI -->
             <div id="investmentLockMessage" class="investment-lock-message" style="display:none;">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
                     <i class="fas fa-lock" style="color:#ffc107; font-size:16px;"></i>
@@ -317,7 +370,7 @@
                 </div>
                 <div style="font-size:11px; line-height:1.4;">
                     📌 <strong>İnvestisiya etdiyiniz məbləğ ÜMUMİ BALANSDAN ÇIXILIR</strong><br>
-                    ⏳ <strong>30 gün ərzində bu məbləği ÇƏKƏ BİLMƏZSİNİZ</strong><br>
+                    ⏳ <strong>30 gün ərzində bu məbləği ÇƏKİLƏ BİLMƏZSİNİZ</strong><br>
                     ✅ <strong>30 gündən sonra "Sərmayəni Geri Çək" düyməsi aktiv olacaq</strong><br>
                     💰 <strong>Sərmayəni geri çəkdikdə, məbləğ ÜMUMİ BALANSA əlavə olunacaq</strong>
                 </div>
@@ -358,7 +411,7 @@
                 </div>
             </div>
             
-            <!-- YENİ: ÜSTÜNLÜKLƏR SİYAHISI -->
+            <!-- ÜSTÜNLÜKLƏR SİYAHISI -->
             <div style="padding:0 20px; margin-top:20px;">
                 <h4 style="margin-bottom:10px; font-size:14px; color:var(--primary);">🎯 NİYƏ BİZ?</h4>
                 <div style="background:var(--card-bg); padding:15px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.05);">
@@ -396,7 +449,23 @@
                 <div style="font-size:12px; color:#999; margin-bottom:15px;">Professional Account</div>
             </div>
 
-            <!-- YENİ: INVESTİSİYA QEYD MESAJI (CABINET) -->
+            <!-- YENİ: BALANS TİPLƏRİ GÖSTƏRİCİSİ -->
+            <div class="balance-types">
+                <div class="balance-type active" id="balanceType1" onclick="switchBalanceType(1)">
+                    <div>Disponibil</div>
+                    <div class="value" id="dispAvailable">$0</div>
+                </div>
+                <div class="balance-type" id="balanceType2" onclick="switchBalanceType(2)">
+                    <div>Aktiv Sərmayə</div>
+                    <div class="value" id="dispInvestedAmount">$0</div>
+                </div>
+                <div class="balance-type" id="balanceType3" onclick="switchBalanceType(3)">
+                    <div>Gəlir</div>
+                    <div class="value" id="dispProfitAmount">$0</div>
+                </div>
+            </div>
+
+            <!-- INVESTİSİYA QEYD MESAJI (CABINET) -->
             <div id="cabinetLockMessage" class="investment-lock-message" style="margin:0 20px 15px 20px;">
                 <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
                     <i class="fas fa-info-circle" style="color:var(--primary); font-size:16px;"></i>
@@ -435,6 +504,10 @@
             <h4 style="padding:20px 20px 5px 20px; font-size:12px; color:#666;">ƏSAS CÜZDAN (Visa)</h4>
             <div class="visa-card" id="myVisa">
                 <div style="position:absolute; top:20px; right:20px; font-weight:bold; font-style:italic; font-size:20px;">VISA</div>
+                <!-- YENİ: PUL ÇƏK BUTONU -->
+                <button class="card-withdraw-btn" onclick="withdrawFullBalance()">
+                    <i class="fas fa-wallet"></i> PULU ÇƏK
+                </button>
                 <div class="visa-chip"></div>
                 <div style="font-size:10px; opacity:0.7; margin-top:10px;">Disponibil Balans</div>
                 <div class="card-balance" id="dispBalance">$0.00</div>
@@ -495,7 +568,7 @@
 
     <script>
         // VERSION KEY
-        const STORAGE_KEY = 'trendds_final_working_v4';
+        const STORAGE_KEY = 'trendds_final_working_v5';
 
         // --- PRELOADER & AUTO LOGIN ---
         window.onload = () => { 
@@ -605,8 +678,11 @@
         let user = { 
             name: "", 
             email: "", 
-            balance: 0, 
-            earned: 0, 
+            // ✅ DİSPONİBİL BALANS (İstifadə oluna bilən pul)
+            availableBalance: 0,
+            // ✅ YIĞILMIŞ GƏLİR (investisiyalardan qazanılan)
+            earned: 0,
+            // ✅ AKTİV SERMAYƏLƏR (30 günlük investisiya)
             investments: [], 
             lastWithdraw: 0, 
             history: [],
@@ -669,6 +745,42 @@
             debugDetails.style.display = debugDetails.style.display === 'block' ? 'none' : 'block';
         }
 
+        // --- YENİ: BALANS TİPİNİ DƏYİŞDİR ---
+        let currentBalanceType = 1; // 1: Disponibil, 2: Aktiv Sərmayə, 3: Gəlir
+        
+        function switchBalanceType(type) {
+            currentBalanceType = type;
+            
+            // Butonları yenilə
+            document.querySelectorAll('.balance-type').forEach((btn, index) => {
+                if (index + 1 === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            
+            // Balans dəyərlərini göstər
+            updateBalanceDisplay();
+        }
+        
+        function updateBalanceDisplay() {
+            const totalInvested = user.investments.reduce((a,b) => a + b.amount, 0);
+            const totalAssets = user.availableBalance + user.earned + totalInvested;
+            
+            // Balans tipləri üçün dəyərlər
+            document.getElementById('dispAvailable').innerText = "$" + user.availableBalance.toFixed(2);
+            document.getElementById('dispInvestedAmount').innerText = "$" + totalInvested.toFixed(2);
+            document.getElementById('dispProfitAmount').innerText = "$" + user.earned.toFixed(2);
+            
+            // Ümumi balans göstəricisi
+            document.getElementById('dashTotal').innerText = "$" + totalAssets.toFixed(2);
+            document.getElementById('dashInvested').innerText = "$" + totalInvested.toFixed(2);
+            
+            // Kart üzərindəki balans (HƏR ZAMAN DİSPONİBİL BALANS)
+            document.getElementById('dispBalance').innerText = "$" + user.availableBalance.toFixed(2);
+        }
+
         // --- YENİ: TƏMA MOTİVASİYA MESAJINI GÖSTƏR ---
         function showInvestmentLockMessage() {
             const lockMessage = document.getElementById('investmentLockMessage');
@@ -683,7 +795,6 @@
                 lockMessage.style.display = 'none';
             }
             
-            // Cabinet-də həmişə göstər
             cabinetLockMessage.style.display = 'block';
             if (document.body.getAttribute('data-theme') === 'dark') {
                 cabinetLockMessage.classList.add('dark');
@@ -744,36 +855,7 @@
             saveData();
         }
 
-        // --- GƏLİR ANALİZİ ---
-        function showProfitAnalysis() {
-            const totalInv = user.investments.reduce((a,b) => a + b.amount, 0);
-            
-            if (totalInv === 0) {
-                alert("❌ Hələ investisiya yoxdur!\n\nGəlir YALNIZ investisiya etdikdən sonra hesablanır.");
-                return;
-            }
-            
-            const dailyProfit = totalInv * 0.015;
-            const monthlyProfit = dailyProfit * 30;
-            const profitPerSecond = dailyProfit / 86400;
-            
-            alert(`💰 GƏLİR TƏHLİLİ:
-────────────────────
-Ümumi Investisiya: $${totalInv.toFixed(2)}
-────────────────────
-GÜNLÜK GƏLİR: $${dailyProfit.toFixed(2)} (1.5%)
-────────────────────
-AYLIQ GƏLİR: $${monthlyProfit.toFixed(2)}
-────────────────────
-Saniyəlik: $${profitPerSecond.toFixed(8)}
-────────────────────
-Cari qazanc: $${user.earned.toFixed(6)}
-────────────────────
-Aktiv investisiya: ${user.investments.length}
-────────────────────`);
-        }
-
-        // --- GƏLİRİ ÇƏK ---
+        // --- YENİ: GƏLİRİ BALANSA KÖÇÜR (DİSPONİBİL BALANSA) ---
         function claimProfit() {
             vibe();
             
@@ -783,16 +865,72 @@ Aktiv investisiya: ${user.investments.length}
             }
             
             let profit = user.earned;
-            user.balance += profit;
+            // ✅ Gəliri DİSPONİBİL BALANSA əlavə et
+            user.availableBalance += profit;
+            
             addToHistory("Gəlir Köçürmə", `+$${profit.toFixed(2)}`);
+            
+            // ✅ Gəliri SIFIRLA (yenidən başlasın)
             user.earned = 0;
+            user.lastSync = Date.now(); // Zamanı yenilə ki, yeni gəlir hesablaması başlasın
             
             saveData();
             updateUI();
             playSound();
             
             sync(`Claimed Profit: $${profit.toFixed(2)}`);
-            alert(`✅ Uğurlu! $${profit.toFixed(2)} balansa əlavə olundu.`);
+            alert(`✅ Uğurlu! $${profit.toFixed(2)} DİSPONİBİL BALANSA əlavə olundu.\n\n💰 Gəlir hesablanması yenidən başladı.`);
+        }
+
+        // --- YENİ: ÜMUMİ BALANSI ÇƏK (KART ÜZƏRİNDƏKİ BUTON) ---
+        function withdrawFullBalance() {
+            vibe();
+            
+            // Yalnız DİSPONİBİL BALANSI çəkə bilər!
+            if (user.availableBalance <= 0) {
+                alert("❌ Disponibil balansınız yoxdur!\n\n" +
+                      "💰 Ümumi Balans: $" + (user.availableBalance + user.earned + user.investments.reduce((a,b)=>a+b.amount,0)).toFixed(2) + "\n" +
+                      "💳 Disponibil Balans: $" + user.availableBalance.toFixed(2) + "\n" +
+                      "📈 Aktiv Sərmayə: $" + user.investments.reduce((a,b)=>a+b.amount,0).toFixed(2) + "\n" +
+                      "🎯 Gəlir: $" + user.earned.toFixed(2));
+                return;
+            }
+            
+            const withdrawAmount = user.availableBalance;
+            
+            if (withdrawAmount < 20) {
+                alert("⚠️ Minimum çıxarış məbləği: $20\nCari balans: $" + withdrawAmount.toFixed(2));
+                return;
+            }
+            
+            if (user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) {
+                alert("⚠️ Çıxarış 3 gündən bir mümkündür.");
+                return;
+            }
+
+            if (confirm(`💰 ÜMUMİ DİSPONİBİL BALANSI ÇƏKMEK İSTƏYİRSİNİZ?\n\n` +
+                       `💳 Məbləğ: $${withdrawAmount.toFixed(2)}\n\n` +
+                       `⚠️ Bütün disponibil balans WhatsApp-a yönləndiriləcək.\n` +
+                       `✅ Balansınız sıfırlanacaq.`)) {
+                
+                // WhatsApp-a yönləndir
+                const message = `Salam, ÜMUMİ DİSPONİBİL BALANSI çəkmək istəyirəm: $${withdrawAmount.toFixed(2)} (${user.email})`;
+                window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=${encodeURIComponent(message)}`, '_blank');
+                
+                // ✅ BALANSI SIFIRLA
+                user.availableBalance = 0;
+                user.lastWithdraw = Date.now();
+                
+                addToHistory("Ümumi Balans Çıxarışı", `-$${withdrawAmount.toFixed(2)}`);
+                
+                updateUI(); 
+                saveData(); 
+                
+                sync(`Full Withdraw: $${withdrawAmount.toFixed(2)}`);
+                
+                alert(`✅ Uğurlu! $${withdrawAmount.toFixed(2)} məbləği üçün WhatsApp-a yönləndirildiniz.\n\n` +
+                      `💰 Disponibil balansınız sıfırlandı.`);
+            }
         }
 
         function addToHistory(type, amount) {
@@ -858,14 +996,16 @@ Aktiv investisiya: ${user.investments.length}
                 
                 user.name = n; 
                 user.email = e; 
-                user.balance = parseFloat(data.data?.balance || 0); 
+                // ✅ DİSPONİBİL BALANSI yüklə
+                user.availableBalance = parseFloat(data.data?.balance || 0); 
                 user.earned = parseFloat(data.data?.earned || 0);
                 
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if(saved) { 
                     const savedUser = JSON.parse(saved); 
                     if(savedUser.email === e) { 
-                        user.balance = Math.max(user.balance, savedUser.balance || 0);
+                        // Əsasən DİSPONİBİL BALANSI saxla
+                        user.availableBalance = Math.max(user.availableBalance, savedUser.availableBalance || savedUser.balance || 0);
                         user.earned = Math.max(user.earned, savedUser.earned || 0);
                         user.investments = savedUser.investments || []; 
                         user.lastWithdraw = savedUser.lastWithdraw || 0;
@@ -885,7 +1025,7 @@ Aktiv investisiya: ${user.investments.length}
                 console.error("Login error:", error);
                 user.name = n;
                 user.email = e;
-                user.balance = 1000;
+                user.availableBalance = 1000; // Demo DİSPONİBİL balans
                 saveData();
                 initApp();
             }
@@ -913,26 +1053,27 @@ Aktiv investisiya: ${user.investments.length}
             }
         }
 
-        // --- YENİ: İNVESTİSİYA FUNKSİYASI (ÜMUMİ BALANSDAN ÇIXILIR) ---
+        // --- YENİ: İNVESTİSİYA FUNKSİYASI (DİSPONİBİL BALANSDAN ÇIXILIR) ---
         function invest(n, p) {
             vibe();
             
-            if(user.balance < p) { 
-                if(confirm("Cüzdan balansınız çatmır. Balans artırmaq üçün cüzdana keçilsin?")) {
+            // ✅ DİSPONİBİL BALANS yoxla
+            if(user.availableBalance < p) { 
+                if(confirm("DİSPONİBİL balansınız çatmır. Balans artırmaq üçün cüzdana keçilsin?")) {
                     switchView('cabinet');
                 }
                 return; 
             }
             
-            // ÜMUMİ BALANSDAN ÇIX!
-            user.balance -= p; 
+            // ✅ DİSPONİBİL BALANSDAN ÇIX!
+            user.availableBalance -= p; 
             
             user.investments.push({
                 name: n, 
                 amount: p, 
                 time: Date.now(),
                 endTime: Date.now() + (30 * 24 * 60 * 60 * 1000),
-                canWithdraw: false // İlkin olaraq false
+                canWithdraw: false
             });
             
             user.totalInvested += p;
@@ -942,7 +1083,7 @@ Aktiv investisiya: ${user.investments.length}
             
             document.getElementById('successMsg').innerHTML = `
                 ✅ <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.<br><br>
-                📌 <small>Bu məbləğ ÜMUMİ BALANSDAN ÇIXILDI</small><br>
+                📌 <small>Bu məbləğ DİSPONİBİL BALANSDAN ÇIXILDI</small><br>
                 ⏳ <small>30 gün ərzində ÇƏKİLƏ BİLMƏZ</small><br>
                 💰 <small>Günlük gəlir: <b>$${(p * 0.015).toFixed(2)}</b></small>
             `;
@@ -956,7 +1097,6 @@ Aktiv investisiya: ${user.investments.length}
             
             sync(`Invest: ${n} $${p}`);
             
-            // Təmas mesajını göstər
             setTimeout(() => {
                 showInvestmentLockMessage();
             }, 500);
@@ -973,17 +1113,15 @@ Aktiv investisiya: ${user.investments.length}
             const daysPassed = Math.floor((now - inv.time) / (86400000));
             const daysLeft = 30 - daysPassed;
             
-            // 30 gündən azdırsa, çəkə bilməz
             if(daysPassed < 30) {
                 alert(`⏳ Bu sərmayə hələ kilidlidir!\n\n📅 ${30 - daysPassed} gün qalıb.\n\n✅ 30 gün tamamlandıqdan sonra "Sərmayəni Geri Çək" düyməsi aktiv olacaq.`);
                 return;
             }
 
-            if(confirm(`💰 Ana pulu ($${inv.amount}) çəkmək istəyirsiniz?\n\n⚠️ Qeyd: Bu investisiyadan gəlir DAYANACAQ.\n\n✅ Məbləğ Disponibil Balansa əlavə olunacaq.`)) {
-                // Balansa əlavə et (ÜMUMİ BALANSA YOX, DİSPONİBİL BALANSA!)
-                user.balance += inv.amount;
+            if(confirm(`💰 Ana pulu ($${inv.amount}) çəkmək istəyirsiniz?\n\n⚠️ Qeyd: Bu investisiyadan gəlir DAYANACAQ.\n\n✅ Məbləğ DİSPONİBİL BALANSA əlavə olunacaq.`)) {
+                // ✅ DİSPONİBİL BALANSA əlavə et
+                user.availableBalance += inv.amount;
                 
-                // Investisiyadan sil
                 user.investments.splice(index, 1);
                 user.totalInvested -= inv.amount;
                 
@@ -993,9 +1131,8 @@ Aktiv investisiya: ${user.investments.length}
                 
                 sync(`Withdrew Principal: $${inv.amount}`);
                 
-                alert(`✅ Uğurlu! $${inv.amount} Disponibil Balansa əlavə edildi.\n\n💰 Bu məbləği indi istifadə edə və ya yeni investisiya edə bilərsiniz.`);
+                alert(`✅ Uğurlu! $${inv.amount} DİSPONİBİL BALANSA əlavə edildi.\n\n💰 Bu məbləği indi istifadə edə və ya yeni investisiya edə bilərsiniz.`);
                 
-                // WhatsApp-a yönləndir (əlavə təsdiq üçün)
                 setTimeout(() => {
                     if(confirm("📱 Çıxarışı rəsmiləşdirmək üçün WhatsApp-a keçilsin?")) {
                         window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=Salam, ana sermayemi geri cekmek istiyorum: $${inv.amount} (${user.email})`, '_blank');
@@ -1006,20 +1143,16 @@ Aktiv investisiya: ${user.investments.length}
 
         // --- YENİLƏNMİŞ UI UPDATE ---
         function updateUI() {
-            // Balanslar
-            document.getElementById('dispBalance').innerText = "$" + user.balance.toFixed(2);
+            // Balans tiplərini göstər
+            updateBalanceDisplay();
+            
+            // Gəlir göstəricisi
             document.getElementById('dispEarned').innerText = "$" + user.earned.toFixed(6);
             document.getElementById('cardNameDisplay').innerText = user.cardName || user.name;
             document.getElementById('cardNumDisplay').innerText = user.cardNum;
             
-            // Statistikalar
-            let totalInv = user.investments.reduce((a,b) => a + b.amount, 0);
-            let totalAssets = user.balance + user.earned + totalInv;
-            
-            document.getElementById('dashTotal').innerText = "$" + totalAssets.toFixed(2);
-            document.getElementById('dashInvested').innerText = "$" + totalInv.toFixed(2);
-            
             // Debug info
+            const totalInv = user.investments.reduce((a,b) => a + b.amount, 0);
             document.getElementById('debugInv').innerText = "$" + totalInv.toFixed(2);
             
             // Portfolio count
@@ -1044,20 +1177,17 @@ Aktiv investisiya: ${user.investments.length}
                 const daysLeft = Math.max(0, 30 - daysPassed);
                 const isLocked = daysPassed < 30;
                 
-                // Bu investisiyadan gəlir
                 const investmentDaily = i.amount * 0.015;
                 const investmentEarned = investmentDaily * (daysPassed / 30);
                 
                 let statusHtml, btnHtml, borderColor, statusColor;
                 
                 if (isLocked) {
-                    // KİLİDLİ (30 gün tamamlanmayıb)
                     statusHtml = `<span style="color:#ff9800; font-size:10px;">🔒 ${daysLeft} gün qalıb</span>`;
                     btnHtml = `<button class="btn-withdraw-locked" style="border:none; border-radius:4px; padding:5px 8px; font-size:10px; cursor:not-allowed;" disabled>KİLİDLİ</button>`;
                     borderColor = '#ff9800';
                     statusColor = '#ff9800';
                 } else {
-                    // AÇIQ (30 gün tamamlanıb)
                     statusHtml = `<span style="color:#28a745; font-size:10px;">✅ Müddət bitdi</span>`;
                     btnHtml = `<button class="btn-withdraw-active" onclick="withdrawPrincipal(${index})" style="border:none; border-radius:4px; padding:5px 10px; font-size:10px; cursor:pointer;">SƏRMAYƏNİ GERİ ÇƏK</button>`;
                     borderColor = '#28a745';
@@ -1107,7 +1237,6 @@ Aktiv investisiya: ${user.investments.length}
             }
             document.getElementById('historyList').innerHTML = historyHtml;
             
-            // Təmas mesajını göstər
             showInvestmentLockMessage();
         }
 
@@ -1119,25 +1248,26 @@ Aktiv investisiya: ${user.investments.length}
                 document.body.setAttribute('data-theme', 'dark');
                 event.target.innerText = "LIGHT";
             }
-            // Tema dəyişdikdə mesajları yenilə
             showInvestmentLockMessage();
         }
         
         function requestDeposit() { 
             let amount = prompt("💰 Balans artırma məbləği ($):", "100"); 
             if(amount && !isNaN(parseFloat(amount))) {
-                window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=Salam, balans artirmaq isteyirem: $${amount} (${user.email})`, '_blank'); 
+                window.open(`https://api.whatsapp.com/send?phone=${PHONE}&text=Salam, DİSPONİBİL balans artirmaq isteyirem: $${amount} (${user.email})`, '_blank'); 
             }
         }
         
         function handleWithdraw() { 
-            // YALNIZ DİSPONİBİL BALANSDAN ÇƏKƏ BİLƏR!
-            if (user.balance <= 0) {
-                alert("❌ Disponibil balansınız yoxdur!\n\n💰 İnvestisiya etdiyiniz məbləğ 30 gün müddətində çəkilə bilməz.");
+            // ✅ YALNIZ DİSPONİBİL BALANSDAN ÇƏKƏ BİLƏR!
+            if (user.availableBalance <= 0) {
+                alert("❌ Disponibil balansınız yoxdur!\n\n" +
+                      "💰 Ümumi Balans: $" + (user.availableBalance + user.earned + user.investments.reduce((a,b)=>a+b.amount,0)).toFixed(2) + "\n" +
+                      "💳 Disponibil Balans: $" + user.availableBalance.toFixed(2));
                 return;
             }
             
-            let amount = prompt("💳 Çıxarış məbləği ($):", Math.min(50, user.balance).toFixed(0)); 
+            let amount = prompt("💳 Çıxarış məbləği ($):", Math.min(50, user.availableBalance).toFixed(0)); 
             if(amount) {
                 let withdrawAmount = parseFloat(amount);
                 if(isNaN(withdrawAmount) || withdrawAmount <= 0) {
@@ -1145,9 +1275,9 @@ Aktiv investisiya: ${user.investments.length}
                     return;
                 }
                 
-                if(withdrawAmount > user.balance) {
-                    alert("❌ Disponibil balansda kifayət qədər vəsait yoxdur.\n\n📌 Ümumi balans: $" + (user.balance + user.earned + user.investments.reduce((a,b)=>a+b.amount,0)).toFixed(2) + 
-                          "\n💰 Disponibil balans: $" + user.balance.toFixed(2));
+                if(withdrawAmount > user.availableBalance) {
+                    alert("❌ Disponibil balansda kifayət qədər vəsait yoxdur.\n\n" +
+                         "💳 Disponibil Balans: $" + user.availableBalance.toFixed(2));
                     return;
                 }
                 
@@ -1161,7 +1291,7 @@ Aktiv investisiya: ${user.investments.length}
                     return;
                 }
 
-                user.balance -= withdrawAmount;
+                user.availableBalance -= withdrawAmount;
                 user.lastWithdraw = Date.now();
                 addToHistory("Pul Çıxarışı", `-$${withdrawAmount}`);
                 
@@ -1186,7 +1316,8 @@ Aktiv investisiya: ${user.investments.length}
                 let data = await res.json(); 
                 
                 if(data.result === 'success') { 
-                    user.balance += data.amount; 
+                    // ✅ DİSPONİBİL BALANSA əlavə et
+                    user.availableBalance += data.amount; 
                     addToHistory("Promo Kod", `+$${data.amount}`);
                     
                     updateUI(); 
@@ -1194,7 +1325,7 @@ Aktiv investisiya: ${user.investments.length}
                     
                     sync(`Promo applied: $${data.amount}`);
                     
-                    alert(`✅ Uğurlu! $${data.amount} balansa əlavə edildi.\n\n💰 İndi investisiya edə bilərsiniz!`);
+                    alert(`✅ Uğurlu! $${data.amount} DİSPONİBİL BALANSA əlavə edildi.\n\n💰 İndi investisiya edə bilərsiniz!`);
                     playSound(); 
                     
                     document.getElementById('pCode').value = '';
@@ -1206,7 +1337,7 @@ Aktiv investisiya: ${user.investments.length}
                 console.error("Promo error:", e);
                 alert("⚠️ Şəbəkə xətası. Offline rejimdə işləyirsiniz.\nDemo: +$50 əlavə edildi.");
                 
-                user.balance += 50;
+                user.availableBalance += 50;
                 addToHistory("Promo Kod (Demo)", "+$50");
                 updateUI();
                 saveData();
@@ -1220,7 +1351,7 @@ Aktiv investisiya: ${user.investments.length}
         
         function sync(status) { 
             if(user.email) {
-                fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance}&invested=${user.totalInvested}&status=${status}`, {
+                fetch(`${API}?action=sync&email=${user.email}&balance=${user.availableBalance}&invested=${user.totalInvested}&status=${status}`, {
                     mode: 'no-cors'
                 }).catch(e => console.log("Sync failed (offline)"));
             }
@@ -1280,6 +1411,35 @@ Aktiv investisiya: ${user.investments.length}
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3000);
+        }
+        
+        // Gəlir Analizi
+        function showProfitAnalysis() {
+            const totalInv = user.investments.reduce((a,b) => a + b.amount, 0);
+            
+            if (totalInv === 0) {
+                alert("❌ Hələ investisiya yoxdur!\n\nGəlir YALNIZ investisiya etdikdən sonra hesablanır.");
+                return;
+            }
+            
+            const dailyProfit = totalInv * 0.015;
+            const monthlyProfit = dailyProfit * 30;
+            const profitPerSecond = dailyProfit / 86400;
+            
+            alert(`💰 GƏLİR TƏHLİLİ:
+────────────────────
+Ümumi Investisiya: $${totalInv.toFixed(2)}
+────────────────────
+GÜNLÜK GƏLİR: $${dailyProfit.toFixed(2)} (1.5%)
+────────────────────
+AYLIQ GƏLİR: $${monthlyProfit.toFixed(2)}
+────────────────────
+Saniyəlik: $${profitPerSecond.toFixed(8)}
+────────────────────
+Cari qazanc: $${user.earned.toFixed(6)}
+────────────────────
+Aktiv investisiya: ${user.investments.length}
+────────────────────`);
         }
     </script>
 </body>
