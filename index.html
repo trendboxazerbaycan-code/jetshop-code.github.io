@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* --- DİZAYN SİSTEMİ (QORUNUR) --- */
+        /* --- DİZAYN SİSTEMİ (HEÇ NƏ SİLİNMƏYİB) --- */
         :root {
             --primary: #0d47a1; --secondary: #1565c0; --success: #00c853; --danger: #d32f2f;
             --bg: #f3f4f6; --card-bg: #ffffff; --text: #1e293b; --gold: #FFD700;
@@ -45,7 +45,6 @@
         .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
         canvas { width: 100%; height: 100px; }
         
-        /* MARKET GRID */
         .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; min-height: 300px; }
         @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
 
@@ -70,14 +69,20 @@
         .modal-card { background: var(--card-bg); width: 100%; max-width: 350px; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,0.5); animation: zoomIn 0.3s; }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
-        /* VISA CARD (MAIN WALLET) */
-        .visa-card { background: linear-gradient(135deg, #1a1a1a, #333); color: white; border-radius: 15px; padding: 20px; margin: 0 20px 20px 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid #444; overflow: hidden; transition: 0.5s; }
-        .visa-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #FFD700, #B8860B); border-radius: 5px; margin-bottom: 20px; }
-        .card-balance { font-size: 28px; font-weight: 800; margin: 10px 0; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-        
-        /* PROFIT CARD (NEW) */
-        .profit-card { background: linear-gradient(135deg, #00c853, #00692c); color: white; border-radius: 15px; padding: 20px; margin: 0 20px 20px 20px; position: relative; box-shadow: 0 10px 30px rgba(0, 200, 83, 0.3); overflow: hidden; }
+        /* BƏRPA OLUNAN STATİSTİKA KARTLARI */
+        .wallet-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 20px; }
+        .stat-card { background: white; padding: 15px; border-radius: 12px; border: 1px solid #eee; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .stat-card h4 { font-size: 10px; color: #888; text-transform: uppercase; margin-bottom: 5px; }
+        .stat-card div { font-size: 16px; font-weight: 800; color: var(--text); }
+
+        .visa-card { background: linear-gradient(135deg, #1a1a1a, #333); color: white; border-radius: 15px; padding: 20px; margin: 0 20px 20px 20px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid #444; overflow: hidden; transition: 0.5s; height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+        .visa-chip { width: 40px; height: 30px; background: linear-gradient(135deg, #FFD700, #B8860B); border-radius: 5px; }
+        .card-balance { font-size: 28px; font-weight: 800; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
+
+        /* QAZANC KARTI */
+        .profit-card { background: linear-gradient(135deg, #00c853, #009624); color: white; border-radius: 15px; padding: 20px; margin: 0 20px; position: relative; box-shadow: 0 10px 30px rgba(0,200,83,0.3); overflow: hidden; }
         .profit-balance { font-size: 32px; font-weight: 800; margin: 10px 0; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .profit-anim { position: absolute; right: -20px; top: -20px; font-size: 100px; opacity: 0.1; transform: rotate(20deg); color: white; }
 
         .cookie-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; color: white; padding: 15px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; font-size: 11px; transform: translateY(100%); transition: 0.5s; padding-bottom: 30px; }
         .cookie-banner.show { transform: translateY(0); }
@@ -202,10 +207,33 @@
                 <div style="font-size:12px; color:#999; margin-bottom:15px;">Professional Account</div>
             </div>
 
+            <div class="wallet-grid">
+                <div class="stat-card">
+                    <h4>Ümumi Balans</h4>
+                    <div id="dashTotal">$0.00</div>
+                </div>
+                <div class="stat-card">
+                    <h4>Aktiv Sərmayə</h4>
+                    <div id="dashInvested" style="color:blue">$0.00</div>
+                </div>
+            </div>
+
+            <h4 style="padding:0 20px; margin-bottom:5px; font-size:12px; color:#666;">CANLI GƏLİR MƏNBƏYİ</h4>
+            <div class="profit-card">
+                <i class="fas fa-bolt profit-anim"></i>
+                <div style="font-size:11px; opacity:0.8;">Saniyəlik Yığılan Faiz</div>
+                <div class="profit-balance" id="dispEarned">$0.000000</div>
+                <div style="font-size:10px; margin-bottom:10px;">Status: <span class="blink">● Aktivdir</span></div>
+                <button class="btn-main btn-sm" style="background:white; color:green; width:100%;" onclick="claimProfit()">
+                    <i class="fas fa-download"></i> BALANSA KÖÇÜR
+                </button>
+            </div>
+
+            <h4 style="padding:20px 20px 5px 20px; font-size:12px; color:#666;">ƏSAS CÜZDAN (Visa)</h4>
             <div class="visa-card" id="myVisa">
                 <div style="position:absolute; top:20px; right:20px; font-weight:bold; font-style:italic; font-size:20px;">VISA</div>
                 <div class="visa-chip"></div>
-                <div style="font-size:10px; opacity:0.7; margin-top:10px;">ƏSAS CÜZDAN (Depozit)</div>
+                <div style="font-size:10px; opacity:0.7; margin-top:10px;">Disponibil Balans</div>
                 <div class="card-balance" id="dispBalance">$0.00</div>
                 
                 <div style="font-family:monospace; font-size:18px; letter-spacing:2px; margin-bottom:15px; text-shadow:0 2px 2px rgba(0,0,0,0.5);" id="cardNumDisplay">
@@ -217,25 +245,22 @@
                 </div>
             </div>
 
-            <div class="profit-card">
-                <div style="position:absolute; right:-20px; top:-20px; font-size:100px; opacity:0.1; color:white;"><i class="fas fa-chart-line"></i></div>
-                <div style="font-size:12px; opacity:0.9;">YIĞILAN FAİZ (Gəlir)</div>
-                <div class="profit-balance" id="dispEarned">$0.000000</div>
-                <div style="font-size:10px; margin-bottom:15px;">Status: <span class="blink">● Canlı Artır</span></div>
-                
-                <button onclick="handleProfitWithdraw()" style="background:white; color:green; border:none; padding:10px; width:100%; border-radius:8px; font-weight:bold; cursor:pointer;">
-                    <i class="fas fa-money-bill-wave"></i> Qazancı Çək
-                </button>
-            </div>
-            
             <div style="padding:0 20px; margin-top:20px;">
-                 <div style="margin-bottom:20px;">
-                     <h4 style="font-size:12px; color:#666; margin-bottom:5px;">Əməliyyatlar</h4>
-                     <button class="btn-main" onclick="requestDeposit()" style="background:#25D366; width:100%; margin-bottom:10px;"><i class="fab fa-whatsapp"></i> Balansı Artır (Depozit)</button>
-                     <div style="display:flex; gap:10px;">
-                        <input type="text" id="pCode" class="inp-field" placeholder="Promo Kod" style="margin-bottom:0;">
-                        <button class="btn-main" style="width:auto; padding:0 20px;" onclick="applyPromo()">OK</button>
-                     </div>
+                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+                     <button class="btn-main" onclick="requestDeposit()" style="background:#25D366;"><i class="fab fa-whatsapp"></i> Artır</button>
+                     <button class="btn-main" onclick="handleWithdraw()" style="background:var(--text);"><i class="fas fa-wallet"></i> Çıxar</button>
+                     <button class="btn-main" onclick="toggleCardEdit()" style="background:#ff9800; color:white;"><i class="fas fa-edit"></i> Kart</button>
+                 </div>
+
+                 <div id="cardEditForm" class="glass-panel" style="padding:15px; display:none;">
+                    <input type="text" id="newCardName" class="inp-field" placeholder="Ad Soyad">
+                    <input type="text" id="newCardNum" class="inp-field" placeholder="Kart Nömrəsi">
+                    <button class="btn-main btn-sm" onclick="saveCardDetails()">Yadda Saxla</button>
+                 </div>
+
+                 <div style="margin-top:20px;">
+                    <input type="text" id="pCode" class="inp-field" placeholder="Promo Kod">
+                    <button class="btn-main" onclick="applyPromo()">Aktivləşdir</button>
                  </div>
 
                  <h4 style="margin-top:20px;">Aktiv Portfelim</h4>
@@ -248,7 +273,7 @@
                      <div style="text-align:center; color:#999; font-size:12px;">Hələ ki əməliyyat yoxdur</div>
                  </div>
                  
-                 <button class="btn-main" onclick="logout()" style="background:#444; margin-top:20px;">Hesabdan Çıx</button>
+                 <button class="btn-main" onclick="logout()" style="background:#f44336; margin-top:20px;">Çıxış</button>
             </div>
             <div style="height:100px;"></div>
         </div>
@@ -263,37 +288,52 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'trendds_pro_v11'; 
+        // NEW VERSION KEY FOR CLEAN START
+        const STORAGE_KEY = 'trendds_fixed_final_v12'; 
 
+        // --- PRELOADER & AUTO LOGIN ---
         window.onload = () => { 
             setTimeout(() => { 
                 document.getElementById('cinematicLoader').style.opacity = '0';
                 setTimeout(() => document.getElementById('cinematicLoader').style.display = 'none', 500);
             }, 2000);
             
-            renderGrid();
+            renderGrid(); // Grid render fix
 
             const savedData = localStorage.getItem(STORAGE_KEY);
             if(savedData) {
                 user = JSON.parse(savedData);
-                // RECALCULATE PROFIT ON LOAD BASED ON TIME
-                calculateProfit();
-                initApp(); 
+                if(user && user.email) {
+                    calculateProfit(); // Calculate missed profit
+                    initApp(); 
+                }
             }
         };
+
+        window.onscroll = () => {
+            let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            let scrolled = (winScroll / height) * 100;
+            document.getElementById("scrollProgress").style.width = scrolled + "%";
+            document.getElementById("scrollTop").style.display = winScroll > 100 ? 'flex' : 'none';
+        };
+
+        // --- PARTICLES ---
+        const canvas = document.getElementById("particles"); const ctx = canvas.getContext("2d"); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        let particlesArray = []; class Particle { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*2; this.speedX=Math.random()*1-0.5; this.speedY=Math.random()*1-0.5; } update(){ this.x+=this.speedX; this.y+=this.speedY; if(this.size>0.2) this.size-=0.1; } draw(){ ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); } }
+        setInterval(()=>{ particlesArray.push(new Particle()); }, 100); function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=0; i<particlesArray.length; i++){ particlesArray[i].update(); particlesArray[i].draw(); if(particlesArray[i].size<=0.3){particlesArray.splice(i,1);i--;}} requestAnimationFrame(animate); } animate();
+
+        // --- CHART ---
+        const chartC = document.getElementById('liveChart'); const cCtx = chartC.getContext('2d'); let cData = [50, 52, 51, 53, 55, 54, 58, 60, 59, 62, 65, 63, 67, 70];
+        function drawChart() { chartC.width = chartC.offsetWidth; chartC.height = chartC.offsetHeight; cCtx.clearRect(0,0,chartC.width,chartC.height); cCtx.beginPath(); cCtx.moveTo(0, chartC.height); let step = chartC.width / (cData.length - 1); for(let i=0; i<cData.length; i++){ let h = 100 - cData[i]; cCtx.lineTo(i*step, h); } cCtx.strokeStyle = '#00c853'; cCtx.lineWidth = 2; cCtx.stroke(); if(Math.random()>0.5) cData.push(cData[cData.length-1] + Math.random()*2); else cData.push(cData[cData.length-1] - Math.random()*2); if(cData.length > 20) cData.shift(); }
+        setInterval(drawChart, 1000);
 
         // --- CORE LOGIC ---
         const API = "https://script.google.com/macros/s/AKfycbw6gXUMslAGxWx21nUKzDhND279Yjv-VckDo8Y_fMEg-m7J35ocE8weS-mVeXLDzdR3/exec";
         const PHONE = "994507516137";
         let user = { 
-            name:"", email:"", 
-            balance:0, // Main Deposit Wallet (Starts 0)
-            profit:0,  // Accumulating Interest
-            investments:[], 
-            lastWithdraw:0, 
-            history: [],
-            lastSync: Date.now(), // For time-delta calculation
-            cardName: "USER NAME", cardNum: "4455 •••• •••• 9012"
+            name:"", email:"", balance:0, earned:0, investments:[], lastWithdraw:0, history: [],
+            cardName: "USER NAME", cardNum: "4455 •••• •••• 9012", lastSync: Date.now()
         };
         
         const markets = [
@@ -307,8 +347,56 @@
 
         function vibe() { if(navigator.vibrate) navigator.vibrate(50); }
         function playSound() { document.getElementById('sndDing').play().catch(e=>{}); }
+        function toggleChat() { let b = document.getElementById('chatBox'); b.style.display = b.style.display==='block'?'none':'block'; }
+        function sendChat(e) { document.getElementById('chatContent').innerHTML += `<div style="text-align:right;margin-top:5px;color:blue;">${e.value}</div>`; e.value=''; setTimeout(()=>{ document.getElementById('chatContent').innerHTML += `<div style="margin-top:5px;">Bot: Connecting...</div>`; playSound(); }, 1000); }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         function openModal(id) { document.getElementById(id).style.display='flex'; }
+        
+        // --- CARD EDIT LOGIC ---
+        function toggleCardEdit() {
+            let f = document.getElementById('cardEditForm');
+            f.style.display = f.style.display === 'block' ? 'none' : 'block';
+        }
+        function saveCardDetails() {
+            let name = document.getElementById('newCardName').value;
+            let num = document.getElementById('newCardNum').value;
+            if(name) user.cardName = name;
+            if(num) user.cardNum = num;
+            saveData();
+            updateUI();
+            toggleCardEdit();
+            alert("Kart məlumatları yadda saxlanıldı!");
+        }
+
+        // --- PROFIT CLAIM LOGIC ---
+        function claimProfit() {
+            vibe();
+            if(user.earned <= 0) return alert("Hələ ki qazanc yoxdur.");
+            
+            let profit = user.earned;
+            user.balance += profit; // Add to Main Wallet
+            user.earned = 0; // Reset Profit
+            
+            addToHistory("Qazanc Köçürmə", `+$${profit.toFixed(2)}`);
+            saveData();
+            updateUI();
+            playSound();
+            sync(`Claimed Profit: $${profit.toFixed(6)}`);
+            alert(`Uğurlu! $${profit.toFixed(2)} balansa əlavə olundu.`);
+        }
+
+        function addToHistory(type, amount) {
+            if(!user.history) user.history = [];
+            user.history.unshift({ type: type, amount: amount, time: new Date().toLocaleString() });
+            if(user.history.length > 20) user.history.pop();
+        }
+
+        // --- CALCULATOR ---
+        function calcProfit() {
+            let val = document.getElementById('calcInput').value;
+            document.getElementById('calcDaily').innerText = "$" + (val * 0.015).toFixed(2);
+            document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2);
+        }
 
         // --- LOGIN ---
         function startBiometricLogin() {
@@ -321,35 +409,30 @@
             const n = document.getElementById('rName').value, e = document.getElementById('rEmail').value;
             if(!n || !e) return alert("Xanaları doldurun");
             try {
-                // Fetch existing data or init new
                 const res = await fetch(`${API}?action=login&name=${n}&email=${e}`);
                 const data = await res.json();
+                user.name=n; user.email=e; user.balance=parseFloat(data.data.balance||0); user.earned=parseFloat(data.data.earned||0);
                 
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if(saved) { 
                     const p = JSON.parse(saved); 
                     if(p.email === e) { 
-                        user = p;
-                        // Time calculation fix
+                        if(p.balance > user.balance) user.balance = p.balance;
+                        user.earned = Math.max(user.earned, p.earned || 0);
+                        user.investments = p.investments || []; 
+                        user.lastWithdraw = p.lastWithdraw || 0;
+                        user.cardName = p.cardName || user.name;
+                        user.cardNum = p.cardNum || "4455 •••• •••• 9012";
+                        user.history = p.history || [];
+                        user.lastSync = p.lastSync || Date.now();
+                        // Recalculate profit for time passed since last sync
                         calculateProfit();
-                    } else {
-                        user.name = n; user.email = e; 
-                        user.balance = parseFloat(data.data.balance || 0);
-                        user.profit = 0;
                     }
-                } else {
-                    user.name = n; user.email = e;
-                    user.balance = parseFloat(data.data.balance || 0);
                 }
                 
                 saveData(); 
                 initApp();
-            } catch(e){ 
-                // Offline fallback
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if(saved) { user = JSON.parse(saved); calculateProfit(); initApp(); }
-                else { alert("Connection Error"); }
-            }
+            } catch(e){ alert("Connection Error"); initApp(); }
         }
 
         function initApp() {
@@ -359,25 +442,43 @@
             document.getElementById('cardNameDisplay').innerText = user.name;
             renderGrid(); 
             updateUI();
-            
-            // Render existing history
-            renderHistory();
-
-            // Run live visual updater
             setInterval(liveUpdate, 1000);
         }
 
-        // --- REAL TIME-DELTA CALCULATION ---
+        function logout() {
+            if(confirm("Çıxış etmək istəyirsiniz?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        }
+
+        function renderGrid() {
+            const g = document.getElementById('marketGrid'); g.innerHTML="";
+            markets.forEach(m=>{
+                let hotHtml = m.hot ? `<span class="hot-tag">HOT</span>` : '';
+                g.innerHTML+=`<div class="item-card">
+                    ${hotHtml}
+                    <img src="${m.img}?auto=format&fit=crop&q=80" class="item-img">
+                    <div class="item-body">
+                        <div style="font-weight:700;">${m.n}</div>
+                        <div style="color:var(--primary); font-weight:bold;">$${m.p}</div>
+                        <button class="btn-main" style="margin-top:5px;padding:8px;font-size:12px;" ontouchstart="invest('${m.n}',${m.p})" onclick="invest('${m.n}',${m.p})">INVEST</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // --- PROFIT CALCULATION ENGINE ---
         function calculateProfit() {
             if(user.investments.length > 0) {
                 const now = Date.now();
-                const diffSeconds = (now - user.lastSync) / 1000; // Seconds passed
+                const diffSeconds = (now - user.lastSync) / 1000;
                 
                 if(diffSeconds > 0) {
                     let totalInvested = user.investments.reduce((a,b) => a + b.amount, 0);
-                    // Profit = Invested * 1.5% * (TimePassed / 1 Day in Seconds)
-                    let profitGained = totalInvested * 0.015 * (diffSeconds / 86400);
-                    user.profit += profitGained;
+                    // Formula: (Invested * 1.5% / 86400) * SecondsPassed
+                    let gain = totalInvested * 0.015 * (diffSeconds / 86400);
+                    user.earned += gain;
                 }
                 user.lastSync = now;
                 saveData();
@@ -391,50 +492,24 @@
             updateUI();
         }
 
-        // --- WITHDRAW PROFIT (GREEN CARD) ---
-        function handleProfitWithdraw() {
-            vibe();
-            if(user.profit < 1) return alert("Hələ ki çıxarış üçün kifayət qədər qazanc yoxdur.");
-            
-            // 3 Day Rule
-            if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Faiz çıxarışı 3 gündən bir mümkündür.");
-
-            let amount = user.profit;
-            
-            if(confirm(`Qazanc ($${amount.toFixed(2)}) çəkilir. Davam edilsin?`)) {
-                
-                // Redirect to WhatsApp
-                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Salam, Faiz Qazancımı çəkmək istəyirəm: $${amount.toFixed(2)} (${user.email})`;
-                
-                // RESET PROFIT AFTER CLAIM REQUEST
-                addToHistory("Faiz Çıxarışı", `-$${amount.toFixed(2)}`);
-                user.profit = 0; 
-                user.lastWithdraw = Date.now();
-                saveData(); 
-                updateUI();
-                sync(`Profit Withdraw $${amount.toFixed(2)}`);
-            }
-        }
-
         // --- INVEST ---
         function invest(n,p) {
             vibe();
             if(user.balance < p) { 
-                if(confirm("Əsas balansda (Visa) vəsait çatmır. Depozit etmək istəyirsiniz?")) requestDeposit();
+                if(confirm("Cüzdan balansınız çatmır. Artırmaq üçün cüzdana keçilsin?")) switchView('cabinet'); 
                 return; 
             }
-            
             user.balance -= p; 
             user.investments.push({name:n, amount:p, time:Date.now()});
             addToHistory("İnvestisiya", `-$${p}`);
             
-            document.getElementById('successMsg').innerHTML = `Siz <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.<br>Qazanc Yaşıl Kartda toplanacaq.`;
+            document.getElementById('successMsg').innerHTML = `Siz <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.`;
             openModal('successModal');
             
             playSound(); updateUI(); saveData(); sync(`Invest ${n}`);
         }
 
-        // --- PRINCIPAL WITHDRAW (30 Days) ---
+        // --- WITHDRAW PRINCIPAL ---
         function withdrawPrincipal(index) {
             vibe();
             let inv = user.investments[index];
@@ -446,14 +521,22 @@
                 addToHistory("Ana Pul Çıxarışı", `$${inv.amount}`);
                 saveData(); updateUI();
                 sync(`Principal Withdraw ${inv.amount}`);
-                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Salam, ana sərmayəmi geri çəkmək istəyirəm: $${inv.amount} (${user.email})`;
+                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Salam, mən yatırdığım ana sərmayəni geri çəkmək istəyirəm: $${inv.amount} (${user.email})`;
             }
         }
 
+        // --- UI UPDATE ---
         function updateUI() {
             document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
-            document.getElementById('dispEarned').innerText="$"+user.profit.toFixed(6); // 6 decimal for live feeling
+            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6);
+            document.getElementById('cardNameDisplay').innerText = user.cardName;
+            document.getElementById('cardNumDisplay').innerText = user.cardNum;
             document.getElementById('cardBalance').innerText = "$"+user.balance.toFixed(2);
+            
+            // Total Assets Calculation
+            let totalInv = user.investments.reduce((a,b)=>a+b.amount,0);
+            document.getElementById('dashTotal').innerText = "$" + (user.balance + user.earned + totalInv).toFixed(2);
+            document.getElementById('dashInvested').innerText = "$" + totalInv.toFixed(2);
 
             let html="";
             user.investments.forEach((i, index)=>{
@@ -469,10 +552,6 @@
             });
             document.getElementById('portfolioList').innerHTML=html || "<div style='text-align:center; color:#999; font-size:12px;'>Hələ ki investisiya yoxdur</div>";
 
-            renderHistory();
-        }
-
-        function renderHistory() {
             let hHtml = "";
             if(user.history && user.history.length > 0) {
                 user.history.forEach(h => { 
@@ -482,37 +561,36 @@
             document.getElementById('historyList').innerHTML = hHtml;
         }
 
-        function renderGrid() {
-            const g = document.getElementById('marketGrid'); g.innerHTML="";
-            markets.forEach(m=>{
-                let hotHtml = m.hot ? `<span class="hot-tag">HOT</span>` : '';
-                g.innerHTML+=`<div class="item-card">${hotHtml}<img src="${m.img}?auto=format&fit=crop&q=80" class="item-img"><div class="item-body"><div style="font-weight:700;">${m.n}</div><div style="color:var(--primary); font-weight:bold;">$${m.p}</div><button class="btn-main" style="margin-top:5px;padding:8px;font-size:12px;" ontouchstart="invest('${m.n}',${m.p})" onclick="invest('${m.n}',${m.p})">INVEST</button></div></div>`;
-            });
+        function toggleTheme() { if(document.body.getAttribute('data-theme')==='dark') document.body.removeAttribute('data-theme'); else document.body.setAttribute('data-theme','dark'); }
+        
+        function requestDeposit() { 
+            let a = prompt("Məbləğ ($):"); 
+            if(a) window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Balans artirmaq isteyirem: $${a} (${user.email})`; 
         }
+        
+        function handleWithdraw() { 
+            let a = prompt("Məbləğ ($):"); 
+            if(a) {
+                let amount = parseFloat(a);
+                if(isNaN(amount) || amount > user.balance) return alert("Əsas balansda kifayət qədər vəsait yoxdur.");
+                if(amount < 20) return alert("Minimum çıxarış $20.");
+                if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Çıxarış 3 gündən bir mümkündür.");
 
-        // --- UTILS ---
-        function addToHistory(type, amount) {
-            if(!user.history) user.history = [];
-            user.history.unshift({ type: type, amount: amount, time: new Date().toLocaleString() });
-            if(user.history.length > 20) user.history.pop();
+                user.balance -= amount;
+                user.lastWithdraw = Date.now();
+                addToHistory("Pul Çıxarışı", `-$${amount}`);
+                updateUI(); saveData(); sync(`Withdraw Wallet $${amount}`); 
+                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Pulu Çəkmək: $${amount} (${user.email})`; 
+            } 
         }
-        function calcProfit() { let val = document.getElementById('calcInput').value; document.getElementById('calcDaily').innerText = "$" + (val * 0.015).toFixed(2); document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2); }
-        function requestDeposit() { let a = prompt("Məbləğ ($):"); if(a) window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Balans artirmaq isteyirem: $${a} (${user.email})`; }
-        async function applyPromo() { let c = document.getElementById('pCode').value; if(!c) return; try { let r = await fetch(`${API}?action=applyCode&code=${c}&email=${user.email}`); let d = await r.json(); if(d.result==='success') { user.balance+=d.amount; addToHistory("Promo Kod", `+$${d.amount}`); updateUI(); saveData(); sync("Code applied"); alert("Balans artırıldı!"); } else alert("Yanlış Kod"); } catch(e){} }
+        
+        async function applyPromo() { let c = document.getElementById('pCode').value; if(!c) return; try { let r = await fetch(`${API}?action=applyCode&code=${c}&email=${user.email}`); let d = await r.json(); if(d.result==='success') { user.balance+=d.amount; addToHistory("Promo Kod", `+$${d.amount}`); updateUI(); saveData(); sync("Code applied"); alert("Success!"); playSound(); } else alert("Invalid Code"); } catch(e){} }
+        
         function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(user)); }
-        function sync(s) { fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.profit.toFixed(2)}&lastStatus=${s}`, {mode:'no-cors'}); }
+        function sync(s) { fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${s}`, {mode:'no-cors'}); }
         function switchView(v,b) { document.getElementById('view-home').style.display = v==='home'?'block':'none'; document.getElementById('view-cabinet').style.display = v==='cabinet'?'block':'none'; document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); if(b) b.classList.add('active'); }
         function contactSupport() { window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Support needed`; }
         function logout() { if(confirm("Çıxış?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
-        
-        // Particles & Chart & Scroll (Standard)
-        window.onscroll = () => { let h = document.documentElement.scrollHeight - document.documentElement.clientHeight; document.getElementById("scrollProgress").style.width = (window.scrollY/h)*100 + "%"; document.getElementById("scrollTop").style.display = window.scrollY > 100 ? 'flex' : 'none'; };
-        const chartC = document.getElementById('liveChart'); const cCtx = chartC.getContext('2d'); let cData = [50, 52, 51, 53, 55, 54, 58, 60, 59, 62, 65, 63, 67, 70];
-        function drawChart() { chartC.width = chartC.offsetWidth; chartC.height = chartC.offsetHeight; cCtx.clearRect(0,0,chartC.width,chartC.height); cCtx.beginPath(); cCtx.moveTo(0, chartC.height); let step = chartC.width / (cData.length - 1); for(let i=0; i<cData.length; i++){ let h = 100 - cData[i]; cCtx.lineTo(i*step, h); } cCtx.strokeStyle = '#00c853'; cCtx.lineWidth = 2; cCtx.stroke(); if(Math.random()>0.5) cData.push(cData[cData.length-1] + Math.random()*2); else cData.push(cData[cData.length-1] - Math.random()*2); if(cData.length > 20) cData.shift(); }
-        setInterval(drawChart, 1000);
-        const canvas = document.getElementById("particles"); const ctx = canvas.getContext("2d"); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-        let particlesArray = []; class Particle { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*2; this.speedX=Math.random()*1-0.5; this.speedY=Math.random()*1-0.5; } update(){ this.x+=this.speedX; this.y+=this.speedY; if(this.size>0.2) this.size-=0.1; } draw(){ ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); } }
-        setInterval(()=>{ particlesArray.push(new Particle()); }, 100); function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=0; i<particlesArray.length; i++){ particlesArray[i].update(); particlesArray[i].draw(); if(particlesArray[i].size<=0.3){particlesArray.splice(i,1);i--;}} requestAnimationFrame(animate); } animate();
     </script>
 </body>
 </html>
