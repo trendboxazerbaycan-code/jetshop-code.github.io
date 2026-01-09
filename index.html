@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* --- ƏSAS DİZAYN SİSTEMİ (TOXUNULMAZ) --- */
+        /* --- DİZAYN SİSTEMİ (QORUNUR) --- */
         :root {
             --primary: #0d47a1; --secondary: #1565c0; --success: #00c853; --danger: #d32f2f;
             --bg: #f3f4f6; --card-bg: #ffffff; --text: #1e293b; --gold: #FFD700;
@@ -18,8 +18,8 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; transition: 0.3s; }
 
-        /* --- UI ELEMENTLƏRİ --- */
-        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; }
+        /* --- UI STYLES --- */
+        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 20px; }
         .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
@@ -45,7 +45,7 @@
         .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
         canvas { width: 100%; height: 100px; }
         
-        /* MOBİL UYĞUNLUQ ÜÇÜN DÜZƏLİŞLƏR */
+        /* MARKET GRID */
         .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; }
         @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
 
@@ -62,6 +62,7 @@
         
         .btn-main { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; touch-action: manipulation; position: relative; z-index: 30; }
         .btn-main:active { transform: scale(0.96); opacity: 0.9; }
+        .btn-sm { padding: 8px 12px; font-size: 12px; width: auto; }
         
         .inp-field { width: 100%; padding: 15px; border: 1px solid #ddd; border-radius: 12px; margin-bottom: 10px; font-size: 16px; } 
         
@@ -75,12 +76,8 @@
         .cookie-banner { position: fixed; bottom: 0; left: 0; width: 100%; background: #222; color: white; padding: 15px; z-index: 20000; display: flex; justify-content: space-between; align-items: center; font-size: 11px; transform: translateY(100%); transition: 0.5s; padding-bottom: 30px; }
         .cookie-banner.show { transform: translateY(0); }
 
-        .fg-meter { height: 10px; background: linear-gradient(90deg, red, yellow, green); border-radius: 5px; margin: 10px 0; position: relative; }
-        .fg-pointer { width: 2px; height: 14px; background: white; position: absolute; top: -2px; left: 60%; transition: 1s; }
-
         .hot-tag { position: absolute; top: 10px; right: 10px; background: red; color: white; font-size: 9px; padding: 3px 8px; border-radius: 10px; animation: pulse 1s infinite; z-index: 2; }
-        .risk-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #ccc; color: #666; margin-left: 5px; }
-
+        
         #authScreen { position: fixed; inset: 0; z-index: 10000; background: linear-gradient(135deg, #000, #0d47a1); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .auth-card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 40px 30px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; color: white; border: 1px solid rgba(255,255,255,0.2); position: relative; z-index: 2; }
         
@@ -107,19 +104,17 @@
     <div id="scrollTop" onclick="window.scrollTo(0,0)" style="position:fixed; bottom:160px; right:20px; background:#333; color:white; width:35px; height:35px; border-radius:50%; display:none; align-items:center; justify-content:center; z-index:4000; cursor:pointer;"><i class="fas fa-arrow-up"></i></div>
 
     <div id="cookieBanner" class="cookie-banner">
-        <div>We use cookies for secure asset management. <a href="#" style="color:var(--gold)">Policy</a></div>
+        <div>We use cookies for secure asset management.</div>
         <button onclick="document.getElementById('cookieBanner').classList.remove('show')" style="background:var(--success); border:none; color:white; padding:5px 15px; border-radius:5px;">Accept</button>
     </div>
 
     <audio id="sndDing" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3"></audio>
-
     <div id="scrollProgress"></div>
 
     <div class="ticker-wrap">
         <div class="ticker">
             <span class="ticker-item">BTC <span class="up">$98,420 ▲</span></span>
             <span class="ticker-item">ETH <span class="up">$3,210 ▲</span></span>
-            <span class="ticker-item">XRP <span class="down">$0.55 ▼</span></span>
             <span class="ticker-item"><i class="fas fa-fire" style="color:orange"></i> HOT: Real Estate +15%</span>
             <span class="ticker-item">USER_88 invested <span class="up">$5,000</span></span>
         </div>
@@ -144,38 +139,25 @@
             <div id="stText">User invested $500</div>
         </div>
 
-        <div class="ai-widget" onclick="toggleChat()">
-            <i class="fas fa-comments"></i>
-        </div>
+        <div class="ai-widget" onclick="toggleChat()"><i class="fas fa-comments"></i></div>
         <div id="chatBox" class="chat-box">
             <div class="chat-header"><span>AI Support</span> <span onclick="toggleChat()" style="cursor:pointer">x</span></div>
-            <div style="height:150px; overflow-y:auto; font-size:12px; color:#666;" id="chatContent">
-                <div>Bot: Hello! How can I help with your investment?</div>
-            </div>
+            <div style="height:150px; overflow-y:auto; font-size:12px; color:#666;" id="chatContent"><div>Bot: Hello! How can I help?</div></div>
             <input type="text" placeholder="Type..." style="width:100%; border:1px solid #ddd; padding:5px; margin-top:10px;" onkeypress="if(event.key==='Enter') sendChat(this)">
         </div>
 
-        <div id="p2pModal" class="modal-overlay">
+        <div id="calcModal" class="modal-overlay">
             <div class="modal-card">
-                <h3><i class="fas fa-exchange-alt"></i> P2P Transfer</h3>
-                <input type="text" class="inp-field" placeholder="Receiver ID (e.g. U-992)" style="margin-top:10px;">
-                <input type="number" class="inp-field" placeholder="Amount ($)">
-                <button class="btn-main" onclick="alert('Sent successfully!'); closeModal('p2pModal')">Send Funds</button>
-                <button class="btn-main" style="background:#ccc; color:#333; margin-top:5px;" onclick="closeModal('p2pModal')">Cancel</button>
-            </div>
-        </div>
-
-        <div id="swapModal" class="modal-overlay">
-            <div class="modal-card">
-                <h3><i class="fas fa-sync"></i> Swap Assets</h3>
-                <div style="display:flex; justify-content:space-between; margin:15px 0;">
-                    <div style="padding:10px; border:1px solid #ddd; border-radius:8px;">USD</div>
-                    <i class="fas fa-arrow-right" style="margin-top:10px;"></i>
-                    <div style="padding:10px; border:1px solid #ddd; border-radius:8px;">BTC</div>
+                <h3><i class="fas fa-calculator"></i> Gəlir Hesablayıcı</h3>
+                <div style="margin-top:15px; text-align:left;">
+                    <label style="font-size:12px; color:#666;">İnvestisiya Məbləği ($):</label>
+                    <input type="number" id="calcInput" class="inp-field" placeholder="Məs: 1000" oninput="calcProfit()">
+                    <div style="background:#f8f9fa; padding:10px; border-radius:8px; margin-top:10px;">
+                        <p style="font-size:13px; display:flex; justify-content:space-between;">Günlük (1.5%): <b id="calcDaily" style="color:green">$0.00</b></p>
+                        <p style="font-size:13px; display:flex; justify-content:space-between;">Aylıq (30 gün): <b id="calcMonthly" style="color:green">$0.00</b></p>
+                    </div>
                 </div>
-                <input type="number" class="inp-field" placeholder="Amount to Swap">
-                <button class="btn-main" onclick="alert('Swapped to BTC Wallet'); closeModal('swapModal')">Execute Swap</button>
-                <button class="btn-main" style="background:#ccc; color:#333; margin-top:5px;" onclick="closeModal('swapModal')">Cancel</button>
+                <button class="btn-main" style="margin-top:10px; background:#444;" onclick="closeModal('calcModal')">Bağla</button>
             </div>
         </div>
 
@@ -190,24 +172,12 @@
 
         <div id="view-home" style="display:block;">
             <div class="hero">
-                <div style="font-size:10px; background:rgba(255,255,255,0.2); display:inline-block; padding:2px 8px; border-radius:10px; margin-bottom:5px;">
-                    <i class="fas fa-bullhorn"></i> Maintenance completed.
-                </div>
-
                 <div style="position:absolute; top:40px; right:20px; z-index:500; display:flex; gap:5px;">
                     <button class="nav-btn" style="color:white; border:1px solid rgba(255,255,255,0.3); padding:2px 8px; border-radius:10px;" onclick="toggleTheme()">DARK</button>
-                    <button class="nav-btn" style="color:white; position:relative;"><i class="fas fa-bell"></i><span style="position:absolute; top:0; right:0; width:8px; height:8px; background:red; border-radius:50%;"></span></button>
                 </div>
-
                 <div class="globe-container"><div class="globe"></div></div>
                 <h1 id="heroTitle">TrendDS Global</h1>
-                <p>AI-Powered Asset Management Ecosystem</p>
-                
-                <div style="width:200px; margin:10px auto; text-align:left;">
-                    <div style="font-size:10px; display:flex; justify-content:space-between;"><span>Fear</span><span>Greed</span></div>
-                    <div class="fg-meter"><div class="fg-pointer"></div></div>
-                    <div style="font-size:10px; text-align:center;">Market Sentiment: <b>GREED (60)</b></div>
-                </div>
+                <p>AI-Powered Asset Management</p>
             </div>
 
             <div class="chart-container">
@@ -217,81 +187,66 @@
                 <canvas id="liveChart"></canvas>
             </div>
 
-            <h4 style="padding:0 20px; margin-bottom:10px;">Investment Packages</h4>
+            <h4 style="padding:0 20px; margin-bottom:10px;">İnvestisiya Paketləri</h4>
             <div class="market-grid" id="marketGrid"></div>
-            
-            <div style="padding:20px; font-size:11px; color:#666; text-align:center;">
-                <i class="fas fa-cloud"></i> 28. Financial Weather: <span style="color:green">Sunny (Bull Market)</span>
-            </div>
             <div style="height:100px;"></div>
         </div>
 
         <div id="view-cabinet" style="display:none;">
-            <div style="text-align:right; padding:0 20px; font-size:10px; color:#666; cursor:pointer;" onclick="changeCardColor()">
-                <i class="fas fa-palette"></i> Change Skin
-            </div>
             
             <div class="visa-card" id="myVisa">
                 <div style="position:absolute; top:20px; right:20px; font-weight:bold; font-style:italic; font-size:20px;">VISA</div>
                 <div class="visa-chip"></div>
-                <div style="font-family:monospace; font-size:18px; letter-spacing:2px; margin-bottom:15px; text-shadow:0 2px 2px rgba(0,0,0,0.5);">
+                <div style="font-family:monospace; font-size:18px; letter-spacing:2px; margin-bottom:15px; text-shadow:0 2px 2px rgba(0,0,0,0.5);" id="cardNumDisplay">
                     4455 •••• •••• 9012
                 </div>
                 <div style="display:flex; justify-content:space-between;">
-                    <div style="text-transform:uppercase; font-size:12px; opacity:0.8;" id="cardName">USER NAME</div>
+                    <div style="text-transform:uppercase; font-size:12px; opacity:0.8;" id="cardNameDisplay">USER NAME</div>
                     <div style="font-size:12px;">EXP 12/28</div>
                 </div>
+            </div>
+            
+            <div style="text-align:right; padding:0 20px; margin-bottom:10px;">
+                <button onclick="toggleCardEdit()" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer;"><i class="fas fa-edit"></i> Kartı Dəyiş</button>
+            </div>
+            
+            <div id="cardEditForm" class="glass-panel" style="margin:0 20px; padding:15px; display:none;">
+                <input type="text" id="newCardName" class="inp-field" placeholder="Kart Sahibinin Adı">
+                <input type="text" id="newCardNum" class="inp-field" placeholder="Kart Nömrəsi (16 rəqəm)">
+                <button class="btn-main btn-sm" onclick="saveCardDetails()">Yadda Saxla</button>
             </div>
 
             <div class="profile-header" style="border:none; padding-top:0; text-align:center;">
                 <h3 id="dispName">User</h3>
-                <div style="font-size:30px; font-weight:800; margin-top:5px; cursor:pointer;" id="dispBalance" onclick="togglePrivacy()">$0.00</div>
-                <div style="font-size:12px; color:var(--success);">Lifetime Profit: <span id="dispEarned">$0.00</span></div>
+                <div style="font-size:30px; font-weight:800; margin-top:5px;" id="dispBalance">$0.00</div>
+                <div style="font-size:11px; color:#999;">Əsas Balans (Cüzdan)</div>
                 
-                <div style="font-size:9px; color:#999; margin-top:5px;">Last Login: IP 192.168.1.12 • Baku</div>
-                
-                <div style="margin-top:5px; font-size:10px; font-weight:bold; color:#555;">XP Level 5 <div style="width:100px; height:4px; background:#eee; display:inline-block; vertical-align:middle; margin-left:5px; border-radius:2px;"><div style="width:60%; height:100%; background:var(--primary); border-radius:2px;"></div></div></div>
+                <div class="glass-panel" style="margin:20px 20px 0 20px; padding:15px; background: rgba(0, 200, 83, 0.1); border:1px solid rgba(0,200,83,0.2);">
+                    <div style="font-size:12px; color:var(--success); font-weight:bold;">Canlı Faiz Qazancı</div>
+                    <div style="font-size:24px; font-weight:800; color:var(--success); margin:5px 0;" id="dispEarned">$0.000000</div>
+                    <button class="btn-main btn-sm" style="background:var(--success); width:100%; margin-top:5px;" onclick="claimProfit()">
+                        <i class="fas fa-download"></i> Qazancı Balansa Köçür
+                    </button>
+                </div>
             </div>
             
-            <div class="glass-panel" style="margin:0 20px; padding:20px;">
+            <div style="padding:0 20px; margin-top:20px;">
                  <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
-                     <button class="btn-main" onclick="requestDeposit()" style="background:#25D366;"><i class="fab fa-whatsapp"></i> Deposit</button>
-                     <button class="btn-main" onclick="handleWithdraw()" style="background:var(--text);"><i class="fas fa-wallet"></i> Withdraw</button>
-                     <button class="btn-main" onclick="openModal('p2pModal')" style="background:#ff9800;"><i class="fas fa-paper-plane"></i> P2P</button>
-                     <button class="btn-main" onclick="openModal('swapModal')" style="background:#9c27b0;"><i class="fas fa-sync"></i> Swap</button>
-                 </div>
-                 
-                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:12px;">
-                     <span><i class="fas fa-shield-alt"></i> 2FA Security</span>
-                     <label style="position:relative; display:inline-block; width:34px; height:20px;">
-                         <input type="checkbox" checked><span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#2196F3; transition:.4s; border-radius:34px;"></span>
-                     </label>
-                 </div>
-
-                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; font-size:12px;">
-                     <span><i class="fas fa-recycle"></i> Auto-Reinvest</span>
-                     <label style="position:relative; display:inline-block; width:34px; height:20px;">
-                         <input type="checkbox"><span style="position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0; background-color:#ccc; transition:.4s; border-radius:34px;"></span>
-                     </label>
+                     <button class="btn-main" onclick="requestDeposit()" style="background:#25D366;"><i class="fab fa-whatsapp"></i> Artır</button>
+                     <button class="btn-main" onclick="handleWithdraw()" style="background:var(--text);"><i class="fas fa-wallet"></i> Çıxar</button>
                  </div>
 
                  <div style="margin-top:20px;">
-                    <input type="text" id="pCode" class="inp-field" placeholder="Enter Promo Code">
-                    <button class="btn-main" onclick="applyPromo()">Activate Code</button>
+                    <input type="text" id="pCode" class="inp-field" placeholder="Promo Kod">
+                    <button class="btn-main" onclick="applyPromo()">Aktivləşdir</button>
                  </div>
 
-                 <div style="margin-top:20px; position:relative;">
-                     <input type="text" placeholder="Search transactions..." style="width:100%; padding:8px; border:1px solid #eee; border-radius:8px; font-size:12px;">
-                     <i class="fas fa-search" style="position:absolute; right:10px; top:10px; color:#ccc;"></i>
-                 </div>
-
-                 <h4 style="margin-top:20px;">Active Portfolio</h4>
+                 <h4 style="margin-top:20px;">Aktiv Portfelim</h4>
                  <div id="portfolioList">
-                     <div class="skeleton" style="height:50px; margin-bottom:10px;"></div>
                      <div class="skeleton" style="height:50px; margin-bottom:10px;"></div>
                  </div>
                  
-                 <button class="btn-main" onclick="logout()" style="background:#444; margin-top:20px;">Log Out</button>
+                 <button class="btn-main" onclick="logout()" style="background:#444; margin-top:20px;">Hesabdan Çıx</button>
             </div>
             <div style="height:100px;"></div>
         </div>
@@ -299,28 +254,23 @@
         <div class="bottom-nav">
             <button class="nav-btn active" onclick="switchView('home', this)"><i class="fas fa-globe"></i> Hub</button>
             <button class="nav-btn" onclick="switchView('cabinet', this)"><i class="fas fa-wallet"></i> Wallet</button>
-            <button class="nav-btn" onclick="document.getElementById('calcModal').style.display='flex'"><i class="fas fa-calculator"></i> Calc</button>
+            <button class="nav-btn" onclick="openModal('calcModal')"><i class="fas fa-calculator"></i> Calc</button>
             <button class="nav-btn" onclick="contactSupport()"><i class="fas fa-headset"></i> Help</button>
         </div>
         
-        <div style="position:fixed; bottom:85px; left:0; width:100%; text-align:center; font-size:9px; color:#999; z-index:4000; pointer-events:none;">
-            <span style="width:8px;height:8px;background:#00c853;border-radius:50%;display:inline-block;"></span> Systems Operational | Encrypted
-        </div>
-
     </div>
 
     <script>
-        const STORAGE_KEY = 'trendds_forever_session_v4'; // Key for permanent login
+        const STORAGE_KEY = 'trendds_forever_session_v5'; 
 
         // --- PRELOADER & AUTO LOGIN ---
         window.onload = () => { 
             setTimeout(() => { document.getElementById('cookieBanner').classList.add('show'); }, 3000); 
             
-            // FOREVER LOGIN CHECK
             const savedData = localStorage.getItem(STORAGE_KEY);
             if(savedData) {
                 user = JSON.parse(savedData);
-                initApp(); // Skip login if data exists
+                initApp(); 
             }
         };
 
@@ -332,7 +282,7 @@
             document.getElementById("scrollTop").style.display = winScroll > 100 ? 'flex' : 'none';
         };
 
-        // --- 1. PARTICLES ---
+        // --- PARTICLES ---
         const canvas = document.getElementById("particles"); const ctx = canvas.getContext("2d"); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particlesArray = []; class Particle { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*2; this.speedX=Math.random()*1-0.5; this.speedY=Math.random()*1-0.5; } update(){ this.x+=this.speedX; this.y+=this.speedY; if(this.size>0.2) this.size-=0.1; } draw(){ ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); } }
         setInterval(()=>{ particlesArray.push(new Particle()); }, 100); function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=0; i<particlesArray.length; i++){ particlesArray[i].update(); particlesArray[i].draw(); if(particlesArray[i].size<=0.3){particlesArray.splice(i,1);i--;}} requestAnimationFrame(animate); } animate();
@@ -345,53 +295,68 @@
         // --- CORE LOGIC ---
         const API = "https://script.google.com/macros/s/AKfycbw6gXUMslAGxWx21nUKzDhND279Yjv-VckDo8Y_fMEg-m7J35ocE8weS-mVeXLDzdR3/exec";
         const PHONE = "994507516137";
-        let user = { name:"", email:"", balance:0, earned:0, investments:[], lastWithdraw:0 };
-        let privacy = false;
+        let user = { 
+            name:"", email:"", balance:0, earned:0, investments:[], lastWithdraw:0,
+            cardName: "USER NAME", cardNum: "4455 •••• •••• 9012"
+        };
         
         const markets = [
-            {n:"Real Estate", p:500, img:"https://images.unsplash.com/photo-1560518883-ce09059eeffa", risk:"Low", hot:true}, 
-            {n:"Stocks", p:400, img:"https://images.unsplash.com/photo-1611974765270-ca1258634369", risk:"Medium", hot:false},
-            {n:"Tech AI", p:300, img:"https://images.unsplash.com/photo-1518770660439-4636190af475", risk:"High", hot:true},
-            {n:"Agro", p:200, img:"https://images.unsplash.com/photo-1625246333195-78d9c38ad449", risk:"Low", hot:false},
-            {n:"Retail", p:100, img:"https://images.unsplash.com/photo-1542838132-92c53300491e", risk:"Medium", hot:false},
-            {n:"Goods", p:50, img:"https://images.unsplash.com/photo-1583947215259-38e31be8751f", risk:"Low", hot:false}
+            {n:"Real Estate", p:500, img:"https://images.unsplash.com/photo-1560518883-ce09059eeffa", hot:true}, 
+            {n:"Stocks", p:400, img:"https://images.unsplash.com/photo-1611974765270-ca1258634369", hot:false},
+            {n:"Tech AI", p:300, img:"https://images.unsplash.com/photo-1518770660439-4636190af475", hot:true},
+            {n:"Agro", p:200, img:"https://images.unsplash.com/photo-1625246333195-78d9c38ad449", hot:false},
+            {n:"Retail", p:100, img:"https://images.unsplash.com/photo-1542838132-92c53300491e", hot:false},
+            {n:"Goods", p:50, img:"https://images.unsplash.com/photo-1583947215259-38e31be8751f", hot:false}
         ];
 
-        // 7. SOUND FX
-        function playSound() { document.getElementById('sndDing').play().catch(e=>{}); }
         function vibe() { if(navigator.vibrate) navigator.vibrate(50); }
-
-        // 20. CHAT
+        function playSound() { document.getElementById('sndDing').play().catch(e=>{}); }
         function toggleChat() { let b = document.getElementById('chatBox'); b.style.display = b.style.display==='block'?'none':'block'; }
-        function sendChat(e) { 
-            document.getElementById('chatContent').innerHTML += `<div style="text-align:right;margin-top:5px;color:blue;">${e.value}</div>`; 
-            e.value=''; 
-            setTimeout(()=>{ document.getElementById('chatContent').innerHTML += `<div style="margin-top:5px;">Bot: Connecting to agent...</div>`; playSound(); }, 1000);
-        }
-
+        function sendChat(e) { document.getElementById('chatContent').innerHTML += `<div style="text-align:right;margin-top:5px;color:blue;">${e.value}</div>`; e.value=''; setTimeout(()=>{ document.getElementById('chatContent').innerHTML += `<div style="margin-top:5px;">Bot: Connecting...</div>`; playSound(); }, 1000); }
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         function openModal(id) { document.getElementById(id).style.display='flex'; }
         
-        // 23. CARD COLOR
-        function changeCardColor() {
-            const colors = ['linear-gradient(135deg, #1a1a1a, #333)', 'linear-gradient(135deg, #0d47a1, #000)', 'linear-gradient(135deg, #b71c1c, #000)'];
-            document.getElementById('myVisa').style.background = colors[Math.floor(Math.random()*colors.length)];
+        // --- CARD EDIT LOGIC ---
+        function toggleCardEdit() {
+            let f = document.getElementById('cardEditForm');
+            f.style.display = f.style.display === 'block' ? 'none' : 'block';
+        }
+        function saveCardDetails() {
+            let name = document.getElementById('newCardName').value;
+            let num = document.getElementById('newCardNum').value;
+            if(name) user.cardName = name;
+            if(num) user.cardNum = num;
+            saveData();
+            updateUI();
+            toggleCardEdit();
+            sync("Card Info Updated");
+            alert("Kart məlumatları yadda saxlanıldı!");
         }
 
-        // 6. PRIVACY MODE
-        function togglePrivacy() {
-            privacy = !privacy;
-            document.getElementById('dispBalance').innerText = privacy ? "$****" : "$"+user.balance.toFixed(2);
+        // --- PROFIT CLAIM LOGIC ---
+        function claimProfit() {
+            vibe();
+            if(user.earned <= 0) return alert("Hələ ki qazanc yoxdur.");
+            
+            let profit = user.earned;
+            user.balance += profit; // Add to Main Wallet
+            user.earned = 0; // Reset Profit
+            
+            saveData();
+            updateUI();
+            playSound();
+            sync(`Claimed Profit: $${profit.toFixed(6)}`);
+            alert(`Uğurlu! $${profit.toFixed(2)} balansa əlavə olundu.`);
         }
 
-        // 4. CALCULATOR
+        // --- CALCULATOR ---
         function calcProfit() {
             let val = document.getElementById('calcInput').value;
             document.getElementById('calcDaily').innerText = "$" + (val * 0.015).toFixed(2);
             document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2);
         }
 
-        // 2. BIOMETRIC LOGIN
+        // --- LOGIN ---
         function startBiometricLogin() {
             const btn = document.querySelector('.auth-card button');
             btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> SCANNING...`;
@@ -400,24 +365,25 @@
 
         async function handleLogin() {
             const n = document.getElementById('rName').value, e = document.getElementById('rEmail').value;
-            if(!n || !e) return alert("Fill fields");
+            if(!n || !e) return alert("Xanaları doldurun");
             try {
                 const res = await fetch(`${API}?action=login&name=${n}&email=${e}`);
                 const data = await res.json();
                 user.name=n; user.email=e; user.balance=parseFloat(data.data.balance||0); user.earned=parseFloat(data.data.earned||0);
                 
-                // Attempt to merge with local data if it exists
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if(saved) { 
                     const p = JSON.parse(saved); 
-                    if(p.email === e) { // Only merge if same email
+                    if(p.email === e) { 
                         user.investments = p.investments || []; 
                         user.lastWithdraw = p.lastWithdraw || 0;
-                        user.earned = Math.max(user.earned, p.earned || 0); // Keep local earned if higher
+                        user.earned = Math.max(user.earned, p.earned || 0);
+                        user.cardName = p.cardName || user.name;
+                        user.cardNum = p.cardNum || "4455 •••• •••• 9012";
                     }
                 }
                 
-                saveData(); // Save immediately for persistence
+                saveData(); 
                 initApp();
             } catch(e){ alert("Connection Error"); initApp(); }
         }
@@ -426,15 +392,12 @@
             document.getElementById('authScreen').style.display='none';
             document.getElementById('appScreen').style.display='block';
             document.getElementById('dispName').innerText = user.name;
-            document.getElementById('cardName').innerText = user.name;
             renderGrid(); updateUI();
-            
-            // RUN CALCULATOR EVERY SECOND
             setInterval(calcRewards, 1000);
         }
 
         function logout() {
-            if(confirm("Exit secure session?")) {
+            if(confirm("Çıxış etmək istəyirsiniz?")) {
                 localStorage.removeItem(STORAGE_KEY);
                 location.reload();
             }
@@ -444,24 +407,22 @@
             const g = document.getElementById('marketGrid'); g.innerHTML="";
             markets.forEach(m=>{
                 let hotHtml = m.hot ? `<span class="hot-tag">HOT</span>` : '';
-                let riskColor = m.risk === 'High' ? 'red' : (m.risk === 'Medium' ? 'orange' : 'green');
                 g.innerHTML+=`<div class="item-card">
                     ${hotHtml}
                     <img src="${m.img}?auto=format&fit=crop&q=80" class="item-img">
                     <div class="item-body">
-                        <div style="font-weight:700;">${m.n} <span class="risk-tag" style="border-color:${riskColor};color:${riskColor}">${m.risk}</span></div>
-                        <div class="item-price">$${m.p}</div>
+                        <div style="font-weight:700;">${m.n}</div>
+                        <div style="color:var(--primary); font-weight:bold;">$${m.p}</div>
                         <button class="btn-main" style="margin-top:5px;padding:8px;font-size:12px;" ontouchstart="invest('${m.n}',${m.p})" onclick="invest('${m.n}',${m.p})">INVEST</button>
                     </div>
                 </div>`;
             });
         }
 
-        // --- SECOND BY SECOND PROFIT CALCULATION ---
+        // --- SECOND BY SECOND PROFIT ---
         function calcRewards() {
             if(user.investments.length>0) {
                 user.investments.forEach(i => {
-                    // Daily 1.5% -> per second
                     const perSecond = (i.amount * 0.015) / 86400; 
                     user.earned += perSecond;
                 });
@@ -469,95 +430,73 @@
             }
         }
 
-        // --- FIXED INVEST LOGIC ---
         function invest(n,p) {
             vibe();
-            if(user.balance<p) { 
-                if(confirm("Insufficient Balance. Deposit?")) switchView('cabinet'); 
-                return; 
-            }
+            if(user.balance<p) { if(confirm("Balans çatmır. Artırmaq istəyirsiniz?")) switchView('cabinet'); return; }
             user.balance-=p; 
             user.investments.push({name:n, amount:p, time:Date.now()});
             
-            document.getElementById('successMsg').innerHTML = `Siz <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.<br>Gündəlik qazanc: 1.5%`;
+            document.getElementById('successMsg').innerHTML = `Siz <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.`;
             openModal('successModal');
-            fireConfetti();
             
             playSound(); updateUI(); saveData(); sync(`Invest ${n}`);
         }
 
-        function fireConfetti() {
-            for(let i=0; i<30; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random()*100 + 'vw';
-                c.style.backgroundColor = ['#f00','#0f0','#00f','#ff0'][Math.floor(Math.random()*4)];
-                c.style.animationDuration = (Math.random()*2+2)+'s';
-                document.body.appendChild(c);
-                setTimeout(()=>c.remove(), 4000);
-            }
-        }
-
-        // --- PRINCIPAL WITHDRAW LOGIC ---
         function withdrawPrincipal(index) {
             vibe();
             let inv = user.investments[index];
-            if(confirm(`Withdraw principal amount ($${inv.amount})? This will stop daily profits.`)) {
+            if(confirm(`Ana pulu ($${inv.amount}) çəkmək istəyirsiniz? Gəlir dayanacaq.`)) {
                 user.investments.splice(index, 1);
                 saveData(); updateUI();
                 sync(`Principal Withdraw ${inv.amount}`);
-                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Requesting Principal Withdrawal: $${inv.amount} for ${user.email}`;
+                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Ana Pulu Çəkmək: $${inv.amount} (${user.email})`;
             }
         }
 
         function updateUI() {
-            if(!privacy) document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
-            // 6 DECIMAL PLACES FOR LIVE EFFECT
+            document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
             document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6);
             
+            // Update Card Visuals
+            document.getElementById('cardNameDisplay').innerText = user.cardName;
+            document.getElementById('cardNumDisplay').innerText = user.cardNum;
+
             let html="";
             user.investments.forEach((i, index)=>{
                 let days = Math.floor((Date.now()-i.time)/(86400000));
                 let isLocked = days < 30;
-                let btnHtml = isLocked ? `<span style="color:red;font-size:10px;"><i class="fas fa-lock"></i> Locked (${30-days}d)</span>` : `<button onclick="withdrawPrincipal(${index})" style="background:var(--dark);color:white;border:none;border-radius:4px;padding:2px 5px;font-size:10px;cursor:pointer;">Withdraw Principal</button>`;
+                let btnHtml = isLocked ? `<span style="color:red;font-size:10px;"><i class="fas fa-lock"></i> 30 gün Kilidli</span>` : `<button onclick="withdrawPrincipal(${index})" style="background:var(--dark);color:white;border:none;border-radius:4px;padding:5px;font-size:10px;">Ana Pulu Çək</button>`;
                 
                 html+=`<div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;">
                     <div><b>${i.name}</b><br><span style="color:#666">$${i.amount}</span></div>
                     <div>${btnHtml}</div>
                 </div>`;
             });
-            document.getElementById('portfolioList').innerHTML=html || "No assets.";
+            document.getElementById('portfolioList').innerHTML=html || "Hələ ki investisiya yoxdur.";
         }
 
         function toggleTheme() { if(document.body.getAttribute('data-theme')==='dark') document.body.removeAttribute('data-theme'); else document.body.setAttribute('data-theme','dark'); }
         
-        // --- FIXED WHATSAPP & LOGIC ---
         function requestDeposit() { 
-            let a = prompt("Deposit Amount ($):"); 
-            if(a) window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Deposit request $${a} for ${user.email}`; 
+            let a = prompt("Məbləğ ($):"); 
+            if(a) window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Balans artirmaq isteyirem: $${a} (${user.email})`; 
         }
         
         function handleWithdraw() { 
-            if(user.earned<20) return alert("Minimum withdrawal is $20"); 
-            if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Profit withdrawal allowed every 3 days.");
-            
-            let a = prompt("Profit Withdrawal Amount ($):"); 
+            let a = prompt("Məbləğ ($):"); 
             if(a) {
                 let amount = parseFloat(a);
-                if(isNaN(amount) || amount > user.earned) return alert("Insufficient profit balance or invalid amount.");
+                if(isNaN(amount) || amount > user.balance) return alert("Balansda kifayət qədər vəsait yoxdur (Qazancı balansa köçürdünüzmü?)");
                 
-                user.earned -= amount; // Deduct immediately
-                user.lastWithdraw = Date.now();
-                updateUI(); saveData(); sync(`Withdraw Profit $${amount}`); 
-                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Profit Withdraw request $${amount} for ${user.email}`; 
+                user.balance -= amount;
+                updateUI(); saveData(); sync(`Withdraw Wallet $${amount}`); 
+                window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Pulu Çəkmək: $${amount} (${user.email})`; 
             } 
         }
         
         async function applyPromo() { let c = document.getElementById('pCode').value; if(!c) return; try { let r = await fetch(`${API}?action=applyCode&code=${c}&email=${user.email}`); let d = await r.json(); if(d.result==='success') { user.balance+=d.amount; updateUI(); saveData(); sync("Code applied"); alert("Success!"); playSound(); } else alert("Invalid Code"); } catch(e){} }
         
-        // PERSISTENT STORAGE
         function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(user)); }
-        
         function sync(s) { fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${s}`, {mode:'no-cors'}); }
         function switchView(v,b) { document.getElementById('view-home').style.display = v==='home'?'block':'none'; document.getElementById('view-cabinet').style.display = v==='cabinet'?'block':'none'; document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); if(b) b.classList.add('active'); }
         function contactSupport() { window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Support needed`; }
