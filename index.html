@@ -80,7 +80,7 @@
         .card-balance { font-size: 28px; font-weight: 800; margin-top: 10px; text-shadow: 0 2px 5px rgba(0,0,0,0.5); }
 
         /* QAZANC KARTI */
-        .profit-card { background: linear-gradient(135deg, #00c853, #009624); color: white; border-radius: 15px; padding: 20px; margin: 0 20px; position: relative; box-shadow: 0 10px 30px rgba(0,200,83,0.3); overflow: hidden; }
+        .profit-card { background: linear-gradient(135deg, #00c853, #009624); color: white; border-radius: 15px; padding: 20px; margin: 0 20px; position: relative; box-shadow: 0 10px 30px rgba(0,200,83,0.3); overflow: hidden; cursor: pointer; }
         .profit-balance { font-size: 32px; font-weight: 800; margin: 10px 0; text-shadow: 0 2px 5px rgba(0,0,0,0.3); }
         .profit-anim { position: absolute; right: -20px; top: -20px; font-size: 100px; opacity: 0.1; transform: rotate(20deg); color: white; }
 
@@ -107,6 +107,9 @@
         .history-type { font-weight: bold; }
         .history-time { font-size: 10px; color: #888; }
 
+        .blink { animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
@@ -158,7 +161,7 @@
             <div class="modal-card">
                 <h3><i class="fas fa-calculator"></i> Gəlir Hesablayıcı</h3>
                 <div style="margin-top:15px; text-align:left;">
-                    <label style="font-size:12px; color:#666;">İnvestisiya Məbləği ($):</label>
+                    <label style="font-size:12px; color:#666;">İnvestisiya Məbləğ ($):</label>
                     <input type="number" id="calcInput" class="inp-field" placeholder="Məs: 1000" oninput="calcProfit()">
                     <div style="background:#f8f9fa; padding:10px; border-radius:8px; margin-top:10px;">
                         <p style="font-size:13px; display:flex; justify-content:space-between;">Günlük (1.5%): <b id="calcDaily" style="color:green">$0.00</b></p>
@@ -219,7 +222,7 @@
             </div>
 
             <h4 style="padding:0 20px; margin-bottom:5px; font-size:12px; color:#666;">CANLI GƏLİR MƏNBƏYİ</h4>
-            <div class="profit-card">
+            <div class="profit-card" onclick="showProfitAnalysis()">
                 <i class="fas fa-bolt profit-anim"></i>
                 <div style="font-size:11px; opacity:0.8;">Saniyəlik Yığılan Faiz</div>
                 <div class="profit-balance" id="dispEarned">$0.000000</div>
@@ -333,7 +336,8 @@
         const PHONE = "994507516137";
         let user = { 
             name:"", email:"", balance:0, earned:0, investments:[], lastWithdraw:0, history: [],
-            cardName: "USER NAME", cardNum: "4455 •••• •••• 9012", lastSync: Date.now()
+            cardName: "USER NAME", cardNum: "4455 •••• •••• 9012", lastSync: Date.now(),
+            totalInvested: 0 // Yeni əlavə et
         };
         
         const markets = [
@@ -368,6 +372,28 @@
             alert("Kart məlumatları yadda saxlanıldı!");
         }
 
+        // --- YENİ: GƏLİR ANALİZİ PƏNCƏRƏSİ ---
+        function showProfitAnalysis() {
+            const totalInv = user.investments.reduce((a,b)=>a+b.amount,0);
+            const dailyProfit = totalInv * 0.015;
+            const monthlyProfit = dailyProfit * 30;
+            const yearlyProfit = dailyProfit * 365;
+            
+            alert(`
+💰 GƏLİR TƏHLİLİ:
+────────────────
+Ümumi Investisiya: $${totalInv.toFixed(2)}
+────────────────
+GÜNLÜK GƏLİR: $${dailyProfit.toFixed(2)}
+────────────────
+AYLIQ GƏLİR: $${monthlyProfit.toFixed(2)}
+────────────────
+İLLİK GƏLİR: $${yearlyProfit.toFixed(2)}
+────────────────
+Cari qazanc: $${user.earned.toFixed(6)}
+            `);
+        }
+
         // --- PROFIT CLAIM LOGIC ---
         function claimProfit() {
             vibe();
@@ -398,6 +424,60 @@
             document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2);
         }
 
+        // --- YENİ: DÜZGÜN GƏLİR HESABLAMA ---
+        function calculateProfit() {
+            if (user.investments.length === 0) {
+                user.lastSync = Date.now();
+                return;
+            }
+            
+            const now = Date.now();
+            const timePassed = now - user.lastSync; // millisaniyə
+            const secondsPassed = timePassed / 1000;
+            
+            // Ümumi investisiya məbləğini hesabla
+            user.totalInvested = user.investments.reduce((total, inv) => total + inv.amount, 0);
+            
+            if (user.totalInvested > 0 && secondsPassed > 0) {
+                // Günlük 1.5% gəlir (0.015)
+                // Saniyəlik gəlir: (Invested * 0.015) / 86400 (gündəki saniyə)
+                const profitPerSecond = (user.totalInvested * 0.015) / 86400;
+                const earned = profitPerSecond * secondsPassed;
+                
+                // Kiçik məbləğləri dəqiq hesabla
+                if (earned > 0.000001) {
+                    user.earned += earned;
+                }
+            }
+            
+            user.lastSync = now;
+            saveData();
+        }
+
+        // --- YENİLƏNMİŞ LIVE UPDATE ---
+        function liveUpdate() {
+            calculateProfit();
+            updateUI();
+            
+            // Hər 10 saniyədən bir gəliri artır (animasiya üçün)
+            if (user.totalInvested > 0 && user.earned > 0) {
+                // Real gəlir artımını göstər
+                const profitEl = document.getElementById('dispEarned');
+                if (profitEl) {
+                    const currentDisplay = parseFloat(profitEl.innerText.replace('$', ''));
+                    const actualEarned = user.earned;
+                    
+                    // Animasiya effekti üçün kiçik artım
+                    if (currentDisplay < actualEarned) {
+                        const increment = (actualEarned - currentDisplay) * 0.1;
+                        profitEl.innerText = '$' + (currentDisplay + increment).toFixed(6);
+                    } else {
+                        profitEl.innerText = '$' + actualEarned.toFixed(6);
+                    }
+                }
+            }
+        }
+
         // --- LOGIN ---
         function startBiometricLogin() {
             const btn = document.querySelector('.auth-card button');
@@ -425,6 +505,7 @@
                         user.cardNum = p.cardNum || "4455 •••• •••• 9012";
                         user.history = p.history || [];
                         user.lastSync = p.lastSync || Date.now();
+                        user.totalInvested = p.totalInvested || 0;
                         // Recalculate profit for time passed since last sync
                         calculateProfit();
                     }
@@ -440,6 +521,10 @@
             document.getElementById('appScreen').style.display='block';
             document.getElementById('dispName').innerText = user.name;
             document.getElementById('cardNameDisplay').innerText = user.name;
+            
+            // İlkin gəlir hesabla
+            calculateProfit();
+            
             renderGrid(); 
             updateUI();
             setInterval(liveUpdate, 1000);
@@ -468,31 +553,7 @@
             });
         }
 
-        // --- PROFIT CALCULATION ENGINE ---
-        function calculateProfit() {
-            if(user.investments.length > 0) {
-                const now = Date.now();
-                const diffSeconds = (now - user.lastSync) / 1000;
-                
-                if(diffSeconds > 0) {
-                    let totalInvested = user.investments.reduce((a,b) => a + b.amount, 0);
-                    // Formula: (Invested * 1.5% / 86400) * SecondsPassed
-                    let gain = totalInvested * 0.015 * (diffSeconds / 86400);
-                    user.earned += gain;
-                }
-                user.lastSync = now;
-                saveData();
-            } else {
-                user.lastSync = Date.now();
-            }
-        }
-
-        function liveUpdate() {
-            calculateProfit();
-            updateUI();
-        }
-
-        // --- INVEST ---
+        // --- YENİLƏNMİŞ INVEST FUNKSİYASI ---
         function invest(n,p) {
             vibe();
             if(user.balance < p) { 
@@ -500,13 +561,27 @@
                 return; 
             }
             user.balance -= p; 
-            user.investments.push({name:n, amount:p, time:Date.now()});
+            user.investments.push({
+                name: n, 
+                amount: p, 
+                time: Date.now(),
+                endTime: Date.now() + (30 * 24 * 60 * 60 * 1000) // 30 gün sonra
+            });
             addToHistory("İnvestisiya", `-$${p}`);
             
-            document.getElementById('successMsg').innerHTML = `Siz <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.`;
+            // Ümumi investisiya məbləğini yenilə
+            user.totalInvested += p;
+            
+            document.getElementById('successMsg').innerHTML = `
+                Siz <b>${n}</b> paketinə <b>$${p}</b> investisiya etdiniz.<br>
+                <small>Günlük gəlir: $${(p * 0.015).toFixed(2)}</small>
+            `;
             openModal('successModal');
             
-            playSound(); updateUI(); saveData(); sync(`Invest ${n}`);
+            playSound(); 
+            updateUI(); 
+            saveData(); 
+            sync(`Invest ${n} $${p}`);
         }
 
         // --- WITHDRAW PRINCIPAL ---
@@ -518,6 +593,7 @@
 
             if(confirm(`Ana pulu ($${inv.amount}) çəkmək istəyirsiniz? Gəlir dayanacaq.`)) {
                 user.investments.splice(index, 1);
+                user.totalInvested -= inv.amount; // Ümumi məbləğdən çıx
                 addToHistory("Ana Pul Çıxarışı", `$${inv.amount}`);
                 saveData(); updateUI();
                 sync(`Principal Withdraw ${inv.amount}`);
@@ -525,7 +601,7 @@
             }
         }
 
-        // --- UI UPDATE ---
+        // --- YENİLƏNMİŞ UI UPDATE ---
         function updateUI() {
             document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
             document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6);
@@ -540,15 +616,39 @@
 
             let html="";
             user.investments.forEach((i, index)=>{
-                let days = Math.floor((Date.now()-i.time)/(86400000));
-                let daysLeft = 30 - days;
-                let isLocked = daysLeft > 0;
+                const now = Date.now();
+                const startTime = i.time;
+                const endTime = i.endTime || (startTime + (30 * 24 * 60 * 60 * 1000));
+                const daysPassed = Math.floor((now - startTime) / (1000 * 60 * 60 * 24));
+                const daysLeft = Math.max(0, 30 - daysPassed);
+                const isLocked = daysLeft > 0;
+                
+                // Bu investisiyadan əldə edilən gəlir
+                const investmentEarned = (i.amount * 0.015 * daysPassed) / 30;
+                
+                let statusHtml = isLocked ? 
+                    `<span style="color:#ff9800; font-size:10px;">⏳ ${daysLeft} gün qalıb</span>` : 
+                    `<span style="color:#4CAF50; font-size:10px;">✅ Aktiv</span>`;
                 
                 let btnHtml = isLocked ? 
-                    `<button style="background:#555; opacity:0.7; color:white; border:none; border-radius:4px; padding:5px; font-size:10px; cursor:not-allowed;" disabled>Kilidli (${daysLeft} gün)</button>` : 
+                    `<button style="background:#555; opacity:0.7; color:white; border:none; border-radius:4px; padding:5px; font-size:10px; cursor:not-allowed;" disabled>Kilidli</button>` : 
                     `<button onclick="withdrawPrincipal(${index})" style="background:#00c853; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:10px; cursor:pointer;">Sərmayəni Çək</button>`;
                 
-                html+=`<div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;"><div><b>${i.name}</b><br><span style="color:#666">$${i.amount}</span></div><div>${btnHtml}</div></div>`;
+                html+=`
+                <div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+                        <div><b>${i.name}</b></div>
+                        <div>${statusHtml}</div>
+                    </div>
+                    <div style="color:#666; font-size:11px;">
+                        Investisiya: <b>$${i.amount}</b><br>
+                        Gəlir: <span style="color:green">$${investmentEarned.toFixed(2)}</span><br>
+                        Müddət: ${daysPassed}/30 gün
+                    </div>
+                    <div style="margin-top:8px; text-align:right;">
+                        ${btnHtml}
+                    </div>
+                </div>`;
             });
             document.getElementById('portfolioList').innerHTML=html || "<div style='text-align:center; color:#999; font-size:12px;'>Hələ ki investisiya yoxdur</div>";
 
@@ -590,7 +690,6 @@
         function sync(s) { fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${s}`, {mode:'no-cors'}); }
         function switchView(v,b) { document.getElementById('view-home').style.display = v==='home'?'block':'none'; document.getElementById('view-cabinet').style.display = v==='cabinet'?'block':'none'; document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); if(b) b.classList.add('active'); }
         function contactSupport() { window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Support needed`; }
-        function logout() { if(confirm("Çıxış?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
     </script>
 </body>
 </html>
