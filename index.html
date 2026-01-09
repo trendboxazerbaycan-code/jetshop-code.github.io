@@ -7,19 +7,19 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* --- DİZAYN SİSTEMİ (QORUNUR) --- */
+        /* --- ƏSAS DİZAYN SİSTEMİ (QORUNUR) --- */
         :root {
             --primary: #0d47a1; --secondary: #1565c0; --success: #00c853; --danger: #d32f2f;
             --bg: #f3f4f6; --card-bg: #ffffff; --text: #1e293b; --gold: #FFD700;
-            --glass: rgba(255, 255, 255, 0.7); --glass-border: rgba(255, 255, 255, 0.2);
+            --glass: rgba(255, 255, 255, 0.85); --glass-border: rgba(255, 255, 255, 0.5);
         }
-        [data-theme="dark"] { --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc; --glass: rgba(30, 41, 59, 0.7); }
+        [data-theme="dark"] { --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc; --glass: rgba(30, 41, 59, 0.9); }
         
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg); color: var(--text); padding-bottom: 100px; overflow-x: hidden; transition: 0.3s; }
 
         /* --- UI ELEMENTLƏRİ --- */
-        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 20px; }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--glass-border); border-radius: 16px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
         .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
         @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
         
@@ -45,8 +45,8 @@
         .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
         canvas { width: 100%; height: 100px; }
         
-        /* MARKET GRID (GÖRÜNMƏ PROBLEMİ HƏLL EDİLDİ) */
-        .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; min-height: 200px; }
+        /* MARKET GRID FIXED */
+        .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; min-height: 300px; }
         @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
 
         .item-card { background: var(--card-bg); border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.2s; position: relative; display: flex; flex-direction: column; }
@@ -229,11 +229,11 @@
                 
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin: 10px 20px;">
                     <div style="background:white; padding:10px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                        <div style="font-size:10px; color:#999;">ƏSAS BALANS (Cüzdan)</div>
+                        <div style="font-size:10px; color:#999;">CÜZDAN (Depozit)</div>
                         <div style="font-size:18px; font-weight:800;" id="dispBalance">$0.00</div>
                     </div>
                     <div style="background:white; padding:10px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                        <div style="font-size:10px; color:var(--success);">YIĞILAN FAİZ (Canlı)</div>
+                        <div style="font-size:10px; color:var(--success);">QAZANC (Faiz)</div>
                         <div style="font-size:18px; font-weight:800; color:var(--success);" id="dispEarned">$0.000000</div>
                     </div>
                 </div>
@@ -281,17 +281,15 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'trendds_db_eternal_v7'; // YENİ DAİMİ AÇAR
+        const STORAGE_KEY = 'trendds_qa_final_v8'; // QA Tested Key
 
         // --- PRELOADER & AUTO LOGIN ---
         window.onload = () => { 
             setTimeout(() => { document.getElementById('cookieBanner').classList.add('show'); }, 3000); 
             
-            // EBEDİ GİRİŞ YOXLANIŞI
             const savedData = localStorage.getItem(STORAGE_KEY);
             if(savedData) {
                 user = JSON.parse(savedData);
-                // Məlumat varsa, birbaşa tətbiqi başlat
                 initApp(); 
             }
         };
@@ -304,17 +302,16 @@
             document.getElementById("scrollTop").style.display = winScroll > 100 ? 'flex' : 'none';
         };
 
-        // --- PARTICLES ---
+        // --- PARTICLES & CHART (Qorunur) ---
         const canvas = document.getElementById("particles"); const ctx = canvas.getContext("2d"); canvas.width = window.innerWidth; canvas.height = window.innerHeight;
         let particlesArray = []; class Particle { constructor(){ this.x=Math.random()*canvas.width; this.y=Math.random()*canvas.height; this.size=Math.random()*2; this.speedX=Math.random()*1-0.5; this.speedY=Math.random()*1-0.5; } update(){ this.x+=this.speedX; this.y+=this.speedY; if(this.size>0.2) this.size-=0.1; } draw(){ ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); } }
         setInterval(()=>{ particlesArray.push(new Particle()); }, 100); function animate(){ ctx.clearRect(0,0,canvas.width,canvas.height); for(let i=0; i<particlesArray.length; i++){ particlesArray[i].update(); particlesArray[i].draw(); if(particlesArray[i].size<=0.3){particlesArray.splice(i,1);i--;}} requestAnimationFrame(animate); } animate();
 
-        // --- CHART ---
         const chartC = document.getElementById('liveChart'); const cCtx = chartC.getContext('2d'); let cData = [50, 52, 51, 53, 55, 54, 58, 60, 59, 62, 65, 63, 67, 70];
         function drawChart() { chartC.width = chartC.offsetWidth; chartC.height = chartC.offsetHeight; cCtx.clearRect(0,0,chartC.width,chartC.height); cCtx.beginPath(); cCtx.moveTo(0, chartC.height); let step = chartC.width / (cData.length - 1); for(let i=0; i<cData.length; i++){ let h = 100 - cData[i]; cCtx.lineTo(i*step, h); } cCtx.strokeStyle = '#00c853'; cCtx.lineWidth = 2; cCtx.stroke(); if(Math.random()>0.5) cData.push(cData[cData.length-1] + Math.random()*2); else cData.push(cData[cData.length-1] - Math.random()*2); if(cData.length > 20) cData.shift(); }
         setInterval(drawChart, 1000);
 
-        // --- CORE LOGIC ---
+        // --- CORE LOGIC (BUG FIXED) ---
         const API = "https://script.google.com/macros/s/AKfycbw6gXUMslAGxWx21nUKzDhND279Yjv-VckDo8Y_fMEg-m7J35ocE8weS-mVeXLDzdR3/exec";
         const PHONE = "994507516137";
         let user = { 
@@ -338,73 +335,32 @@
         function closeModal(id) { document.getElementById(id).style.display='none'; }
         function openModal(id) { document.getElementById(id).style.display='flex'; }
         
-        // --- CARD EDIT LOGIC ---
-        function toggleCardEdit() {
-            let f = document.getElementById('cardEditForm');
-            f.style.display = f.style.display === 'block' ? 'none' : 'block';
-        }
-        function saveCardDetails() {
-            let name = document.getElementById('newCardName').value;
-            let num = document.getElementById('newCardNum').value;
-            if(name) user.cardName = name;
-            if(num) user.cardNum = num;
-            saveData();
-            updateUI();
-            toggleCardEdit();
-            alert("Kart məlumatları yadda saxlanıldı!");
-        }
-
-        // --- PROFIT CLAIM LOGIC ---
-        function claimProfit() {
-            vibe();
-            if(user.earned <= 0) return alert("Hələ ki qazanc yoxdur.");
-            
-            let profit = user.earned;
-            user.balance += profit; // Add to Main Wallet
-            user.earned = 0; // Reset Profit
-            
-            addToHistory("Qazanc Köçürmə", `+$${profit.toFixed(2)}`);
-            saveData();
-            updateUI();
-            playSound();
-            sync(`Claimed Profit: $${profit.toFixed(6)}`);
-            alert(`Uğurlu! $${profit.toFixed(2)} balansa əlavə olundu.`);
-        }
-
-        function addToHistory(type, amount) {
-            user.history.unshift({ type: type, amount: amount, time: new Date().toLocaleString() });
-            if(user.history.length > 20) user.history.pop();
-        }
-
-        // --- CALCULATOR ---
-        function calcProfit() {
-            let val = document.getElementById('calcInput').value;
-            document.getElementById('calcDaily').innerText = "$" + (val * 0.015).toFixed(2);
-            document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2);
-        }
-
-        // --- LOGIN ---
-        function startBiometricLogin() {
-            const btn = document.querySelector('.auth-card button');
-            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> SCANNING...`;
-            setTimeout(() => { handleLogin(); }, 1500);
-        }
-
+        // --- QA FIX: LOGIN LOGIC ---
         async function handleLogin() {
             const n = document.getElementById('rName').value, e = document.getElementById('rEmail').value;
             if(!n || !e) return alert("Xanaları doldurun");
             try {
+                // 1. Fetch form Google Sheet
                 const res = await fetch(`${API}?action=login&name=${n}&email=${e}`);
                 const data = await res.json();
-                user.name=n; user.email=e; user.balance=parseFloat(data.data.balance||0); user.earned=parseFloat(data.data.earned||0);
                 
+                // 2. Initialize from Server
+                let serverBal = parseFloat(data.data.balance || 0);
+                
+                // 3. Check LocalStorage (Prioritize Server if > 0)
                 const saved = localStorage.getItem(STORAGE_KEY);
+                user.name = n; user.email = e;
+                user.balance = serverBal; // Default to server
+                user.earned = parseFloat(data.data.earned || 0);
+
                 if(saved) { 
                     const p = JSON.parse(saved); 
                     if(p.email === e) { 
+                        // MERGE LOGIC: Prevent overwriting valid balance with 0, but keep local progress
+                        if(p.balance > user.balance) user.balance = p.balance; // Trust local if higher (e.g. profit claimed)
+                        user.earned = Math.max(user.earned, p.earned || 0);
                         user.investments = p.investments || []; 
                         user.lastWithdraw = p.lastWithdraw || 0;
-                        user.earned = Math.max(user.earned, p.earned || 0); // Keep local earned
                         user.cardName = p.cardName || user.name;
                         user.cardNum = p.cardNum || "4455 •••• •••• 9012";
                         user.history = p.history || [];
@@ -413,7 +369,7 @@
                 
                 saveData(); 
                 initApp();
-            } catch(e){ alert("Connection Error"); initApp(); }
+            } catch(e){ alert("İnternet xətası. Təkrar yoxlayın."); }
         }
 
         function initApp() {
@@ -423,13 +379,6 @@
             document.getElementById('cardName').innerText = user.name;
             renderGrid(); updateUI();
             setInterval(calcRewards, 1000);
-        }
-
-        function logout() {
-            if(confirm("Çıxış etmək istəyirsiniz?")) {
-                localStorage.removeItem(STORAGE_KEY);
-                location.reload();
-            }
         }
 
         function renderGrid() {
@@ -448,26 +397,13 @@
             });
         }
 
-        // --- SECOND BY SECOND PROFIT ---
-        function calcRewards() {
-            if(user.investments.length>0) {
-                user.investments.forEach(i => {
-                    // Saniyəlik artım (yalnız EARNED balansına)
-                    const perSecond = (i.amount * 0.015) / 86400; 
-                    user.earned += perSecond;
-                });
-                updateUI(); saveData();
-            }
-        }
-
+        // --- INVEST & WITHDRAW LOGIC (QA FIXED) ---
         function invest(n,p) {
             vibe();
-            // STRICT BALANCE CHECK (Balans Cüzdandan çıxılır)
             if(user.balance < p) { 
-                if(confirm("Əsas Balansda (Cüzdan) kifayət qədər vəsait yoxdur. Artırmaq istəyirsiniz?")) switchView('cabinet'); 
+                if(confirm("Cüzdan balansınız çatmır. Artırmaq üçün cüzdana keçilsin?")) switchView('cabinet'); 
                 return; 
             }
-            
             user.balance -= p; 
             user.investments.push({name:n, amount:p, time:Date.now()});
             addToHistory("İnvestisiya", `-$${p}`);
@@ -482,11 +418,9 @@
             vibe();
             let inv = user.investments[index];
             let days = Math.floor((Date.now()-inv.time)/(86400000));
-            
-            // 30 DAY LOCK ENFORCEMENT
             if(days < 30) return alert(`Bu sərmayə hələ kilidlidir. ${30-days} gün qalıb.`);
 
-            if(confirm(`Ana pulu ($${inv.amount}) çəkmək istəyirsiniz? Gəlir dayanacaq.`)) {
+            if(confirm(`Ana pulu ($${inv.amount}) çəkmək istəyirsiniz?`)) {
                 user.investments.splice(index, 1);
                 addToHistory("Ana Pul Çıxarışı", `$${inv.amount}`);
                 saveData(); updateUI();
@@ -495,63 +429,69 @@
             }
         }
 
+        function claimProfit() {
+            vibe();
+            if(user.earned <= 0) return alert("Hələ ki qazanc yoxdur.");
+            let profit = user.earned;
+            user.balance += profit; 
+            user.earned = 0; 
+            addToHistory("Qazanc Köçürmə", `+$${profit.toFixed(2)}`);
+            saveData(); updateUI(); playSound(); sync(`Claimed Profit: $${profit.toFixed(6)}`);
+            alert(`Uğurlu! $${profit.toFixed(2)} balansa əlavə olundu.`);
+        }
+
+        function calcRewards() {
+            if(user.investments.length>0) {
+                user.investments.forEach(i => {
+                    const perSecond = (i.amount * 0.015) / 86400; 
+                    user.earned += perSecond;
+                });
+                updateUI(); saveData();
+            }
+        }
+
         function updateUI() {
-            // Update Headers (Balanslar Ayrılıb)
             document.getElementById('dispBalance').innerText="$"+user.balance.toFixed(2);
-            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6); // Canlı artım görünür
-            
-            // Update Card
+            document.getElementById('dispEarned').innerText="$"+user.earned.toFixed(6);
             document.getElementById('cardNameDisplay').innerText = user.cardName;
             document.getElementById('cardNumDisplay').innerText = user.cardNum;
             document.getElementById('cardBalanceDisplay').innerText = "$"+user.balance.toFixed(2);
 
-            // Render Portfolio
             let html="";
             user.investments.forEach((i, index)=>{
                 let days = Math.floor((Date.now()-i.time)/(86400000));
                 let daysLeft = 30 - days;
-                let isLocked = daysLeft > 0;
+                let btnHtml = daysLeft > 0 ? 
+                    `<button style="background:#555; opacity:0.7; color:white; border:none; border-radius:4px; padding:5px; font-size:10px; cursor:not-allowed;" disabled>Kilidli (${daysLeft} gün)</button>` : 
+                    `<button onclick="withdrawPrincipal(${index})" style="background:#00c853; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:10px; cursor:pointer;">Sərmayəni Çək</button>`;
                 
-                // BUTTON LOGIC FOR 30 DAYS
-                let btnHtml = "";
-                if(isLocked) {
-                    btnHtml = `<button style="background:#555; opacity:0.7; color:white; border:none; border-radius:4px; padding:5px; font-size:10px; cursor:not-allowed;" disabled>Kilidli (${daysLeft} gün)</button>`;
-                } else {
-                    btnHtml = `<button onclick="withdrawPrincipal(${index})" style="background:#00c853; color:white; border:none; border-radius:4px; padding:5px 10px; font-size:10px; cursor:pointer;">Sərmayəni Çək</button>`;
-                }
-                
-                html+=`<div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;">
-                    <div><b>${i.name}</b><br><span style="color:#666">$${i.amount}</span></div>
-                    <div>${btnHtml}</div>
-                </div>`;
+                html+=`<div style="background:#f8f9fa;padding:10px;margin-bottom:5px;border-radius:8px;font-size:12px;display:flex;justify-content:space-between;align-items:center;"><div><b>${i.name}</b><br><span style="color:#666">$${i.amount}</span></div><div>${btnHtml}</div></div>`;
             });
             document.getElementById('portfolioList').innerHTML=html || "Hələ ki investisiya yoxdur.";
 
-            // Render History
             let hHtml = "";
-            user.history.forEach(h => {
-                hHtml += `<div class="history-item"><span class="history-type">${h.type}</span> <span>${h.amount}</span></div>`;
-            });
+            user.history.forEach(h => { hHtml += `<div class="history-item"><span class="history-type">${h.type}</span> <span>${h.amount}</span></div>`; });
             document.getElementById('historyList').innerHTML = hHtml || "<div style='text-align:center;color:#999'>Boşdur</div>";
         }
 
+        // --- HELPER FUNCTIONS ---
+        function toggleCardEdit() { let f = document.getElementById('cardEditForm'); f.style.display = f.style.display === 'block' ? 'none' : 'block'; }
+        function saveCardDetails() { let name = document.getElementById('newCardName').value; let num = document.getElementById('newCardNum').value; if(name) user.cardName = name; if(num) user.cardNum = num; saveData(); updateUI(); toggleCardEdit(); alert("Kart məlumatları yadda saxlanıldı!"); }
+        function addToHistory(type, amount) { user.history.unshift({ type: type, amount: amount, time: new Date().toLocaleString() }); if(user.history.length > 20) user.history.pop(); }
+        function calcProfit() { let val = document.getElementById('calcInput').value; document.getElementById('calcDaily').innerText = "$" + (val * 0.015).toFixed(2); document.getElementById('calcMonthly').innerText = "$" + (val * 0.015 * 30).toFixed(2); }
         function toggleTheme() { if(document.body.getAttribute('data-theme')==='dark') document.body.removeAttribute('data-theme'); else document.body.setAttribute('data-theme','dark'); }
-        
-        function requestDeposit() { 
-            let a = prompt("Məbləğ ($):"); 
-            if(a) window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Balans artirmaq isteyirem: $${a} (${user.email})`; 
-        }
+        function requestDeposit() { let a = prompt("Məbləğ ($):"); if(a) window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Balans artirmaq isteyirem: $${a} (${user.email})`; }
         
         function handleWithdraw() { 
-            // PROFIT WITHDRAW RULE: Min 20, Every 3 Days
-            if(user.earned<20 && user.balance < 20) return alert("Minimum çıxarış $20-dır. Balansa köçürdükdən sonra çıxara bilərsiniz."); 
-            if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Faiz çıxarışı 3 gündən bir mümkündür.");
-            
             let a = prompt("Məbləğ ($):"); 
             if(a) {
                 let amount = parseFloat(a);
-                if(isNaN(amount) || amount > user.balance) return alert("Əsas balansda kifayət qədər vəsait yoxdur. Qazancınızı balansa köçürdünüzmü?");
-                
+                // CHECK ONLY MAIN BALANCE
+                if(isNaN(amount) || amount > user.balance) return alert("Cüzdan balansında kifayət qədər vəsait yoxdur. (Qazancınızı cüzdana köçürdünüzmü?)");
+                // 3 DAY RULE FOR PROFIT WITHDRAW (Simplified check)
+                if(amount < 20) return alert("Minimum çıxarış $20.");
+                if(user.lastWithdraw && (Date.now() - user.lastWithdraw) < 259200000) return alert("Çıxarış 3 gündən bir mümkündür.");
+
                 user.balance -= amount;
                 user.lastWithdraw = Date.now();
                 addToHistory("Pul Çıxarışı", `-$${amount}`);
@@ -566,6 +506,7 @@
         function sync(s) { fetch(`${API}?action=sync&email=${user.email}&balance=${user.balance.toFixed(2)}&earned=${user.earned.toFixed(2)}&lastStatus=${s}`, {mode:'no-cors'}); }
         function switchView(v,b) { document.getElementById('view-home').style.display = v==='home'?'block':'none'; document.getElementById('view-cabinet').style.display = v==='cabinet'?'block':'none'; document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active')); if(b) b.classList.add('active'); }
         function contactSupport() { window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Support needed`; }
+        function logout() { if(confirm("Çıxış?")) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
     </script>
 </body>
 </html>
