@@ -7,7 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
-        /* --- DİZAYN SİSTEMİ (HEÇ NƏ SİLİNMƏYİB) --- */
+        /* --- DİZAYN SİSTEMİ (QORUNUR) --- */
         :root {
             --primary: #0d47a1; --secondary: #1565c0; --success: #00c853; --danger: #d32f2f;
             --bg: #f3f4f6; --card-bg: #ffffff; --text: #1e293b; --gold: #FFD700;
@@ -45,6 +45,7 @@
         .chart-container { margin: -40px 20px 20px 20px; background: var(--card-bg); border-radius: 16px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: relative; z-index: 10; }
         canvas { width: 100%; height: 100px; }
         
+        /* MARKET GRID FIXED */
         .market-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 0 20px 20px 20px; position: relative; z-index: 20; min-height: 300px; }
         @media (max-width: 350px) { .market-grid { grid-template-columns: 1fr; } }
 
@@ -692,4 +693,4 @@ Cari qazanc: $${user.earned.toFixed(6)}
         function contactSupport() { window.location.href=`https://api.whatsapp.com/send?phone=${PHONE}&text=Support needed`; }
     </script>
 </body>
-</html>
+</html>```
